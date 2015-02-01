@@ -18,7 +18,7 @@ setup(
     url='http://pypi.python.org/pypi/cred/',
     license='BSD',
     description='Connected Reactive Electronic Devices.',
-    long_description=open('README').read(),
+    long_description=open('README.rst').read(),
     classifiers=[
         'Development Status :: 1 - Planning',
         'Environment :: Console',
