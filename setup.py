@@ -7,7 +7,7 @@ setup(
     author='Tehnix',
     author_email='christianlaustsen@gmail.com',
     packages=['cred', 'cred.test'],
-    scripts=[],
+    scripts=['bin/cred-server.py', 'bin/cred-client.py'],
     url='http://pypi.python.org/pypi/cred/',
     license='LICENSE',
     description='Connected Reactive Electronic Devices.',
