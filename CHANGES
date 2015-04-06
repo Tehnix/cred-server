@@ -1,4 +1,5 @@
-v0.1.0, 1/2/2015 -- Initial release
+v0.1.0, 1/2/2015 -- Initial release.
 v0.1.1, 1/2/2015 -- Update classifiers and requires.
-v0.1.2, 1/2/2015 -- Update classifiers and README
-
+v0.1.2, 1/2/2015 -- Update classifiers and README.
+v0.1.3, 1/2/2015 -- Add extension to README, so github can parse it.
+v0.1.4, 6/4/2015 -- Add server components and testing of the server

@@ -10,7 +10,7 @@ if sys.version_info < (3,):
 
 setup(
     name='cred',
-    version='0.1.2',
+    version='0.1.3',
     author='Tehnix',
     author_email='christianlaustsen@gmail.com',
     packages=['cred', 'cred.test'],
