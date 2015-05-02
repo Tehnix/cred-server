@@ -6,6 +6,7 @@ the flask server.
 from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
+from flask.json import JSONEncoder
 
 
 # Create our Application
@@ -27,4 +28,3 @@ def initDB():
 
 # Import the routes here, to avoid circular imports
 import cred.routes
-

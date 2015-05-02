@@ -1,5 +1,5 @@
 """ Setup file for the cred package. """
-from distutils.core import setup
+from setuptools import setup
 import sys
 
 # The package only works with python >=3.0
@@ -33,5 +33,5 @@ setup(
     requires=[
         'python (>=3.0)',
     ],
+    test_suite='nose.collector',
 )
-

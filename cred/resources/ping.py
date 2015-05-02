@@ -9,4 +9,3 @@ class Ping(Resource):
 
     def post(self):
         pass
-
