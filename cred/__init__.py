@@ -4,8 +4,8 @@ the flask server.
 
 """
 from flask import Flask
-from flask_restful import Api
-from flask_sqlalchemy import SQLAlchemy
+from flask.ext.restful import Api
+from flask.ext.sqlalchemy import SQLAlchemy
 from flask.json import JSONEncoder
 
 
@@ -22,6 +22,8 @@ db = SQLAlchemy(app)
 # Import all the models, so that when we create the db, we
 # create it with the actual tables we need
 from cred.models import *
+
+
 def initDB():
     """Create the database tables."""
     db.create_all()

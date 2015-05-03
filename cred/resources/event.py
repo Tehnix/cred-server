@@ -1,44 +1,29 @@
-from flask_restful import Resource, reqparse
-from cred import api, db
+from datetime import datetime
+from flask.ext.restful import reqparse
+from cred import db
 from cred.common import util
-from cred.resources.auth import client_from_session
 from cred.models.event import Event as EventModel
 
 
-def client_has_event(event_name, client):
-    events = client.registered_events.all()
-    for event in events:
-        if event.name == event_name:
-            return True
-    return False
-
-
-class Event(Resource):
+class Event(util.AuthenticatedResource):
     """General event actions."""
 
     def post(self):
-        """Add a new event from a client."""
+        """Create a new event."""
         # Set up the parser for the root of the object
-        root_parser = util.parser.copy()
-        root_parser.add_argument('event', type=dict)
-        root_args = root_parser.parse_args()
-        event_parser = reqparse.RequestParser()
-        event_parser.add_argument('name', type=str, location=('event',))
-        event_parser.add_argument('location', type=str, location=('event',))
-        event_parser.add_argument('action', type=str, location=('event',))
-        event_parser.add_argument('value', type=str, location=('event',))
-        event_args = event_parser.parse_args(req=root_args)
+        parser = reqparse.RequestParser()
+        parser.add_argument('event', type=dict)
+        pargs = parser.parse_args()
+        event_args = util.add_nested_arguments(pargs, 'event', {
+            'name': str,
+            'location': str,
+            'action': str,
+            'value': str
+        })
 
-        # Make sure the client actually has this event registered
-        client = client_from_session(root_args['sessionKey'])
-        if not client_has_event(event_args['name'], client):
-            return {
-                'status': 405,
-                'message': 'Not Allowed'
-            }, 405
         # Create the event in the database
         event = EventModel(
-            client,
+            self.client,
             event_args['name'],
             event_args['location'],
             event_args['action'],
@@ -59,12 +44,16 @@ class Event(Resource):
         }, 201
 
     def get(self):
-        """Get the last event a client has submitted."""
-        root_parser = util.parser.copy()
-        root_args = root_parser.parse_args()
-        client = client_from_session(root_args['sessionKey'])
-        # Get the last event (it is sorted descending by id)
-        event = client.events.first()
+        """Get all new events since the client last pulled for them."""
+        event = self.client.events.order_by(EventModel.id.desc()).first()
+        self.client.last_pull = datetime.utcnow()
+        if not event:
+            return {
+                'status': 200,
+                'message': 'OK',
+                'newEvents': False,
+                'events': {}
+            }, 200
         return {
             'status': 200,
             'message': 'OK',
@@ -78,16 +67,25 @@ class Event(Resource):
         }, 200
 
 
-class EventItem(Resource):
+class EventAll(util.AuthenticatedResource):
+    """Actions on multiple events."""
+
+    def get(self):
+        pass
+
+
+class EventItem(util.AuthenticatedResource):
     """Actions on specific client events."""
 
     def get(self, event_id):
-        """Get a specific event a client has submitted."""
-        root_parser = util.parser.copy()
-        root_args = root_parser.parse_args()
-        client = client_from_session(root_args['sessionKey'])
+        """Fetch a specific event a client has requested."""
         # Get the last event (it is sorted descending by id)
         event = EventModel.query.filter_by(id=event_id).first()
+        if not event:
+            return {
+                'status': 404,
+                'message': 'Not Found'
+            }, 404
         return {
             'status': 200,
             'message': 'OK',
@@ -99,4 +97,3 @@ class EventItem(Resource):
                 'value': event.value
             }
         }, 200
-

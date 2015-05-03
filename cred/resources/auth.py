@@ -1,10 +1,10 @@
 import hashlib
 import random
 import time
-from flask_restful import Resource, reqparse
+import json
+from flask.ext.restful import Resource, reqparse
 from cred import db
 from cred.models.client import Client
-from cred.models.registered_event import RegisteredEvent
 from cred.models.subscribe import Subscribe
 
 
@@ -16,8 +16,14 @@ def create_client_session_key(api_key):
     session_key.update(api_key.encode('utf-8'))
     return session_key.hexdigest()
 
-def client_from_session(session_key):
-    return Client.query.filter_by(session=session_key).first()
+
+def subscribe_to_events(client, subscribe):
+    for device in subscribe:
+        location = None
+        if 'location' in subscribe[device]:
+            location = subscribe[device]['location']
+        sub = Subscribe(client, device, location)
+        db.session.add(sub)
 
 
 class Auth(Resource):
@@ -25,42 +31,31 @@ class Auth(Resource):
 
     def post(self):
         # Set up the parser for the root of the object
-        root_parser = reqparse.RequestParser()
-        root_parser.add_argument(
+        parser = reqparse.RequestParser()
+        parser.add_argument(
             'apiKey',
             type=str,
             required=True,
             location='json',
             help="An API key is required!")
-        root_parser.add_argument('device', type=str)
-        root_parser.add_argument('location', type=str)
-        root_parser.add_argument('events', type=str, action='append')
-        root_parser.add_argument('subscribe', type=dict)
-        root_args = root_parser.parse_args()
+        parser.add_argument('device', type=str)
+        parser.add_argument('location', type=str)
+        parser.add_argument('events', type=str, action='append')
+        parser.add_argument('subscribe', type=dict)
+        pargs = parser.parse_args()
 
-        session_key = create_client_session_key(root_args['apiKey'])
-        # Create a client database object from our model
-        c = Client(root_args['device'], root_args['location'], session_key)
-        db.session.add(c)
-        # Add events to the database, linked to the client
-        for event in root_args['events']:
-            e = RegisteredEvent(c, event)
-            db.session.add(e)
-        # Construct a list of subscribed events and also add them to the
-        # database
-        subscribed = []
-        subscribe = root_args['subscribe']
-        for device in subscribe:
-            if 'location' in subscribe[device]:
-                location = subscribe[device]['location']
-            else:
-                location = None
-            s = Subscribe(c, device, location)
-            subscribed.append(device)
-            db.session.add(s)
-
-        # Write the data and return a response
+        session_key = create_client_session_key(pargs['apiKey'])
+        # Register the client information to the session key
+        client = Client(pargs['device'], pargs['location'], session_key)
+        db.session.add(client)
+        # Subscribe the client to the requested events
+        subscribe_to_events(client, pargs['subscribe'])
         db.session.commit()
+
+        subscribes = {}
+        for item in client.subscribes.all():
+            subscribes[item.event] = {'location': item.location}
+
         # FIXME: Set cookie in a proper way!
         return {
             'status': 201,
@@ -71,6 +66,5 @@ class Auth(Resource):
                 'slot': None
             },
             'PINGTimeout': 240,
-            'subscribe': subscribed
+            'subscribe': subscribes
         }, 201, {'Set-Cookie': 'sessionKey=' + session_key}
-

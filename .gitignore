@@ -53,3 +53,7 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Other files
+.DS_Store
+.tm_properties

@@ -2,6 +2,7 @@ import os
 import tempfile
 import unittest
 import json
+from functools import wraps
 import cred
 
 
@@ -14,6 +15,21 @@ SUBSCRIBE = {
     'Light': {'location': 'Living Room'},
     'Alarm': {}
 }
+
+
+def assertEqual(test_object, assertables):
+    """Convenience method for asserting multiple items."""
+    for value, expected_value in assertables.items():
+        test_object.assertEqual(value, expected_value)
+
+
+def authenticate(fun):
+    """Decorator for authenticating a client."""
+    @wraps(fun)
+    def wrapped(self, *args, **kwargs):
+        self.authenticate_with_server()
+        fun(self, *args, **kwargs)
+    return wrapped
 
 
 class BaseTestCase(unittest.TestCase):
@@ -48,4 +64,3 @@ class BaseTestCase(unittest.TestCase):
         resp = json.loads(response.data.decode('utf-8'))
         self.session_key = resp['sessionKey']
         return response
-
