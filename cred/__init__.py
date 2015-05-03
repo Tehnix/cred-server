@@ -16,7 +16,7 @@ app = Flask(__name__)
 api = Api(app)
 
 # Configure it to use a SQLite DB, using SQLAlchemy
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test1.db'
 db = SQLAlchemy(app)
 
 # Import all the models, so that when we create the db, we

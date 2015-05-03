@@ -14,3 +14,10 @@ class Subscribe(db.Model):
         self.client = client
         self.event = event
         self.location = location
+
+    def __repr__(self):
+        return '<Client %r, Event %r, Location %r>' % (
+            self.client.device,
+            self.event,
+            self.location
+        )

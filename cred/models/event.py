@@ -8,7 +8,7 @@ class Event(db.Model):
     location = db.Column(db.String(240))
     action = db.Column(db.String(240))
     value = db.Column(db.String(240))
-    time = db.Column(db.DateTime)
+    time = db.Column(db.DateTime, default=datetime.utcnow)
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
     client = db.relationship(
         'Client',
@@ -25,11 +25,11 @@ class Event(db.Model):
         self.time = time
 
     def __repr__(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'location': self.location,
-            'action': self.action,
-            'value': self.value,
-            'time': self.time
-        }
+        return '<ID %r, Name %r, Location %r, Action %r, Value %r, Time %r>' % (
+            self.id,
+            self.name,
+            self.location,
+            self.action,
+            self.value,
+            self.time
+        )

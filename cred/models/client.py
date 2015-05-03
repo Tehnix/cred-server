@@ -7,8 +7,8 @@ class Client(db.Model):
     device = db.Column(db.String(240))
     location = db.Column(db.String(240))
     session = db.Column(db.String(240))
-    last_active = db.Column(db.DateTime)
-    last_pull = db.Column(db.DateTime)
+    last_active = db.Column(db.DateTime, default=datetime.utcnow)
+    last_pull = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __init__(self, device, location, session, active=None, pull=None):
         self.device = device
@@ -22,4 +22,9 @@ class Client(db.Model):
         self.last_pull = pull
 
     def __repr__(self):
-        return '<Device %r, Location %r' % (self.device, self.location)
+        return '<Device %r, Location %r, Last Pull %r, Last Active %r>' % (
+            self.device,
+            self.location,
+            self.last_active,
+            self.last_pull
+        )

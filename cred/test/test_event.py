@@ -28,7 +28,7 @@ not_subscribed_event = {
     'event': {
         'device': 'Lamp',
         'name': 'Light',
-        'location': 'Living Room',
+        'location': 'Lobby',
         'action': 'Light Changed',
         'value': 'On'
     }
@@ -103,11 +103,53 @@ class EventTestCase(testutil.BaseTestCase):
             resp['status']: 200,
             resp['message']: 'OK',
             resp['newEvents']: True,
-            d1['event']['id'] not in resp['events']: True,
-            d2['event']['id'] in resp['events']: True,
-            d3['event']['id'] in resp['events']: True,
-            d4['event']['id'] in resp['events']: True
+            d1['event']['id'] == resp['events'][0]['id']: False,
+            d2['event']['id']: resp['events'][0]['id'],
+            d3['event']['id']: resp['events'][1]['id'],
+            d4['event']['id']: resp['events'][2]['id'],
         })
+
+    @testutil.authenticate
+    def test_getting_list_of_full_events(self):
+        """Fetch a list of new events, when there are new events waiting."""
+        # Create a event that the client has subscribed to
+        data = json.dumps(subscribed_event)
+        self.app.post('/events', data=data, content_type='application/json')
+        response = self.app.get('/events/full')
+        resp = json.loads(response.data.decode('utf-8'))
+        # Check that we actually get the full event in the feed
+        print(resp)
+        testutil.assertEqual(self, {
+            response.status_code: 200,
+            resp['status']: 200,
+            resp['message']: 'OK',
+            resp['events'][0]['name']: 'Light',
+            resp['events'][0]['action']: 'Light Changed',
+            resp['events'][0]['value']: 'On',
+            'id' in resp['events'][0]: True,
+        })
+
+    @testutil.authenticate
+    def test_client_event_pull_time_is_updated(self):
+        """
+        Check that last pull time of the client is updated after events have
+        been pulled.
+
+        """
+        # Create a event that the client has subscribed to
+        data = json.dumps(subscribed_event)
+        self.app.post('/events', data=data, content_type='application/json')
+        response = self.app.get('/events')
+        resp = json.loads(response.data.decode('utf-8'))
+        # Check that we actually get an event in the feed
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(resp['events'], [])
+        # Check that we now get no events, meaning the last pull time was
+        # updated on the client
+        response = self.app.get('/events')
+        resp = json.loads(response.data.decode('utf-8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(resp['events'], [])
 
     @testutil.authenticate
     def test_getting_a_specific_event(self):

@@ -1,11 +1,45 @@
 from datetime import datetime
+from collections import OrderedDict
 from flask.ext.restful import reqparse
 from cred import db
 from cred.common import util
 from cred.models.event import Event as EventModel
 
 
-class Event(util.AuthenticatedResource):
+def get_new_events(client, full_information=False):
+    subscribes = client.subscribes
+    events = []
+    for subscribtion in subscribes:
+        if subscribtion.location is None:
+            subscribed_events = EventModel.query.filter(
+                EventModel.time >= client.last_pull
+            ).filter(
+                EventModel.name == subscribtion.event
+            ).all()
+        else:
+            subscribed_events = EventModel.query.filter(
+                EventModel.time >= client.last_pull
+            ).filter(
+                EventModel.location == subscribtion.location
+            ).filter(
+                EventModel.name == subscribtion.event
+            ).all()
+        for event in subscribed_events:
+            if full_information:
+                events.append({
+                    'id': event.id,
+                    'device': event.client.device,
+                    'name': event.name,
+                    'action': event.action,
+                    'value': event.value,
+                    'time': event.time.isoformat()
+                })
+            else:
+                events.append({'id': event.id})
+    return sorted(events, key=lambda item: item['id'])
+
+
+class Events(util.AuthenticatedResource):
     """General event actions."""
 
     def post(self):
@@ -39,42 +73,59 @@ class Event(util.AuthenticatedResource):
                 'device': event.client.device,
                 'name': event.name,
                 'action': event.action,
-                'value': event.value
+                'value': event.value,
+                'time': event.time.isoformat()
             }
         }, 201
 
     def get(self):
-        """Get all new events since the client last pulled for them."""
-        event = self.client.events.order_by(EventModel.id.desc()).first()
+        """Get all IDs for new events since the client last pulled for them."""
+        # Gather the IDs for all events the client has subscribed to
+        events = get_new_events(self.client)
+        # Update the time the client last pulled event information
         self.client.last_pull = datetime.utcnow()
-        if not event:
+        db.session.commit()
+        if not events:
             return {
                 'status': 200,
                 'message': 'OK',
                 'newEvents': False,
-                'events': {}
+                'events': []
             }, 200
         return {
             'status': 200,
             'message': 'OK',
-            'event': {
-                'id': event.id,
-                'device': event.client.device,
-                'name': event.name,
-                'action': event.action,
-                'value': event.value
-            }
+            'newEvents': True,
+            'events': events
         }, 200
 
 
-class EventAll(util.AuthenticatedResource):
+class EventsFull(util.AuthenticatedResource):
     """Actions on multiple events."""
 
     def get(self):
-        pass
+        """Get data for new events since the client last pulled for them."""
+        # Gather the IDs for all events the client has subscribed to
+        events = get_new_events(self.client, full_information=True)
+        # Update the time the client last pulled event information
+        self.client.last_pull = datetime.utcnow()
+        db.session.commit()
+        if not events:
+            return {
+                'status': 200,
+                'message': 'OK',
+                'newEvents': False,
+                'events': []
+            }, 200
+        return {
+            'status': 200,
+            'message': 'OK',
+            'newEvents': True,
+            'events': events
+        }, 200
 
 
-class EventItem(util.AuthenticatedResource):
+class EventsItem(util.AuthenticatedResource):
     """Actions on specific client events."""
 
     def get(self, event_id):
