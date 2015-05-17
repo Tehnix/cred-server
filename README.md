@@ -4,10 +4,14 @@ cred (Connected Reactive Electronic Devices), enables you to connect your
 electronic devices, in a way so that they can communicate with each other
 and react on events happening in the network.
 
-Events can for example be one device turning on, which then sends out a
-signal (an event). Others are then able to subscribe to different events,
-and can react when they are notified that such an event has occured.
 
+An example application cred would be to connect the devices in a living room. If the light switch is connected, and then turned on it would transmit an event like,
+
+```JSON
+{'device': 'Light', 'location': 'Living Room', 'action': 'Lights Toggled', 'value': 'On'}
+```
+
+which the thermostat would have subscribe to. The server will then transmit this event to the thermostat when it occurs, and the thermostat could act accordingly, like say turning up the temperature in the room since it's most likely going to be occupied now.
 
 Usage
 =====
