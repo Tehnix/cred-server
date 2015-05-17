@@ -41,11 +41,11 @@ on: /clients/<int>/subscribedevents
 
 | Parameter      | Function                                           |
 |----------------|----------------------------------------------------|
-| full=`<bool>`  | Return the full information instead of just IDs    |
-| before=`<int>` | Returns IDs lower than <int>                       |
-| after=`<int>`  | Returns IDs higher than <int>                      |
-| limit=`<int>`  | Limit the number of items to <int> items           |
-| offset=`<int>` | Skip <int> number of items before fetching         |
+| `full=<bool>`  | Return the full information instead of just IDs    |
+| `before=<int>` | Returns IDs lower than <int>                       |
+| `after=<int>`  | Returns IDs higher than <int>                      |
+| `limit=<int>`  | Limit the number of items to <int> items           |
+| `offset=<int>` | Skip <int> number of items before fetching         |
 
 An example call with multiple parameters `/events?full=true&limit=10&offset=10`,
 which will pull the full information for 10 events, starting from after the 10
