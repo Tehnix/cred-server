@@ -12,6 +12,7 @@ and can react when they are notified that such an event has occured.
 Usage
 =====
 Currently not complete, but you can
+
 1. `$ git clone git@github.com:Tehnix/cred.git`
 2. `$ cd cred && python cred/runserver.py`
 
