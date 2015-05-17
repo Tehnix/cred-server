@@ -1,6 +1,6 @@
 cred
 ====
-cred (Connected Reactive Electronic Devices), enables you to connect your
+**cred** (Connected Reactive Electronic Devices), enables you to connect your
 electronic devices, in a way so that they can communicate with each other
 and react on events happening in the network.
 
