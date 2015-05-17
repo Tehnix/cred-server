@@ -44,6 +44,9 @@ The URL endpoints and their functionality are described below,
 | `/clients/<int>/events`           | GET    | Return IDs of all events from the client  |
 | `/clients/<int>/subscribedevents` | GET    | Return IDs of all events the client has subscribed to |
 
+
+### Parameters
+
 Additionally the following query parameters can also be appended to the
 resource, for extra fine-tuning. The parameters below work when using GET
 requests on the following resources: /events and /clients. And both GET and PUT
@@ -56,6 +59,9 @@ on: /clients/<int>/subscribedevents
 | `after=<int>`  | Returns IDs higher than <int>                      |
 | `limit=<int>`  | Limit the number of items to <int> items           |
 | `offset=<int>` | Skip <int> number of items before fetching         |
+
+
+### Example API Call
 
 An example call with multiple parameters `/events?full=true&limit=10&offset=10`,
 which will pull the full information for 10 events, starting from after the 10
