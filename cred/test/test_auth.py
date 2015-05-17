@@ -15,15 +15,13 @@ class AuthTestCase(testutil.BaseTestCase):
         testutil.assertEqual(self, {
             response.status_code: 201,
             resp['status']: 201,
-            resp['message']: 'Created',
+            resp['message']: 'Authenticated',
+            'id' in resp: True,
+            'sessionKey' in resp: True,
             resp['scheduled']['slot']: None,
             resp['PINGTimeout']: 240,
             resp['scheduled']['assigned']: False
         })
-        self.assertCountEqual(
-            resp['subscribe'],
-            list(cred.test.util.SUBSCRIBE)
-        )
 
 
 if __name__ == '__main__':

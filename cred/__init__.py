@@ -8,6 +8,7 @@ from flask.ext.restful import Api
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.json import JSONEncoder
 
+SSL = True
 
 # Create our Application
 app = Flask(__name__)

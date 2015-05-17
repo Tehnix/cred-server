@@ -59,12 +59,12 @@ class Auth(Resource):
         # FIXME: Set cookie in a proper way!
         return {
             'status': 201,
-            'message': 'Created',
+            'message': 'Authenticated',
+            'id': client.id,
             'sessionKey': session_key,
             'scheduled': {
                 'assigned': False,
                 'slot': None
             },
-            'PINGTimeout': 240,
-            'subscribe': subscribes
+            'PINGTimeout': 240
         }, 201, {'Set-Cookie': 'sessionKey=' + session_key}

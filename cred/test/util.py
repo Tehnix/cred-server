@@ -48,11 +48,14 @@ class BaseTestCase(unittest.TestCase):
         os.close(self.db_file_descriptor)
         os.unlink(self.dbfile)
 
-    def authenticate_with_server(self):
+    def authenticate_with_server(self, alternate_device=None):
         """Authenticate with the server."""
+        device = DEVICE
+        if alternate_device is not None:
+            device = alternate_device
         req = json.dumps({
             'apiKey': API_KEY,
-            'device': DEVICE,
+            'device': device,
             'location': LOCATION,
             'events': EVENTS,
             'subscribe': SUBSCRIBE
@@ -63,4 +66,5 @@ class BaseTestCase(unittest.TestCase):
             content_type='application/json')
         resp = json.loads(response.data.decode('utf-8'))
         self.session_key = resp['sessionKey']
+        self.client_id = resp['id']
         return response

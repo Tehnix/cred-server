@@ -1,5 +1,8 @@
-from cred import app, initDB
+from cred import app, initDB, SSL
 
 if __name__ == '__main__':
     initDB()
-    app.run(debug=True, ssl_context='adhoc')
+    if SSL:
+        app.run(debug=True, ssl_context='adhoc')
+    else:
+        app.run(debug=True)
