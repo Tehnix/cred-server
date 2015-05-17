@@ -8,7 +8,12 @@ and react on events happening in the network.
 An example application cred would be to connect the devices in a living room. If the light switch is connected, and then turned on it would transmit an event like,
 
 ```JSON
-{'device': 'Light', 'location': 'Living Room', 'action': 'Lights Toggled', 'value': 'On'}
+{
+    "device": "Light",
+    "location": "Living Room",
+    "action": "Lights Toggled",
+    "value": "On"
+}
 ```
 
 which the thermostat would have subscribe to. The server will then transmit this event to the thermostat when it occurs, and the thermostat could act accordingly, like say turning up the temperature in the room since it's most likely going to be occupied now.
