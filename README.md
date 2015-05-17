@@ -60,10 +60,12 @@ pull the full information for new events that the client has subscribed to.
 With the `after=<int>` parameter, the server now doesn't need to keep track of
 when the client last pulled, since the client can control that itself. To give
 an example, a client with ID=145 is doing its first series of requests:
-    1. The client requests `/clients/145/subscribedevents?full=true&limit=10`
-    2. A response with a list of events comes back, the newest being ID=288
-    3. The client requests `/clients/145/subscribedevents?from=true&after=288`
-    4. A response with all events with ID > 288 comes back
+
+1. The client requests `/clients/145/subscribedevents?full=true&limit=10`
+2. A response with a list of events comes back, the newest being ID=288
+3. The client requests `/clients/145/subscribedevents?from=true&after=288`
+4. A response with all events with ID > 288 comes back
+
 And so on. The minimizes the state kept on the server. If step 2. produced no
 results, the client would set `after=0`, which would still give new events only.
 
