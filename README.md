@@ -74,7 +74,7 @@ Development
 =====
 The following should get you running:
 
-1) Set up a virtual environment: `virtualenv env`
-2) Activate the virtual environment: `source env/bin/activate`
-3) Install the required packages: `pip install -r requirements.txt`
-4) Run tests with `nosetests` and alternatively with `--with-watch` (detects file changes)
+1. Set up a virtual environment: `virtualenv env`
+2. Activate the virtual environment: `source env/bin/activate`
+3. Install the required packages: `pip install -r requirements.txt`
+4. Run tests with `nosetests` and alternatively with `--with-watch` (detects file changes)
