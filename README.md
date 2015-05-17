@@ -36,12 +36,12 @@ The URL endpoints and their functionality are described below,
 |---------------------------------|--------|-----------|
 | `/auth`                           | GET    | Authenticate the client and return a session key |
 | `/events`                         | GET    | Return IDs of all events, ordered by ID descending |
+| `/events`                         | POST   | Create a new event associated with the client POSTing it |
 | `/events/<int>`                   | GET    | Return full information for a specific event |
 | `/clients`                        | GET    | Return IDs of all clients that are active |
 | `/clients/me`                     | GET    | Return information about the client itself |
 | `/clients/<int>`                  | GET    | Return information about a specific client |
 | `/clients/<int>/events`           | GET    | Return IDs of all events from the client  |
-| `/clients/<int>/events`           | POST   | Create a new event associated with the client |
 | `/clients/<int>/subscribedevents` | GET    | Return IDs of all events the client has subscribed to |
 
 Additionally the following query parameters can also be appended to the
