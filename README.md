@@ -11,7 +11,7 @@ An example application cred would be to connect the devices in a living room. If
 {
     "device": "Light",
     "location": "Living Room",
-    "action": "Lights Toggled",
+    "action": "Toggled",
     "value": "On"
 }
 ```
