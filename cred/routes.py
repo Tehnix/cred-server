@@ -1,5 +1,8 @@
 """
-A quick overview of the routes can be seen in the table below,
+A quick overview of the routes can be seen in the table below. An API key with
+read permission has access to all GET requests. Write permission gives access
+to all GETs and POSTs in the table below. Finally, the admin permission gives
+access to a special endpoint that can create API keys.
 
 | Resource                        | Method |
 |---------------------------------|--------|
@@ -28,13 +31,35 @@ and /clients/<int>/subscribedevents.
 
 This will form the basis of the API, from which many actions can be performed.
 
+Earlier, admin permissions were mentioned. The route that they give access to
+is,
+
+| Resource                        | Method |
+|---------------------------------|--------|
+| /apikeys                        | GET    |
+| /apikeys                        | POST   |
+
+
 """
 from cred import api
 from cred.resources.auth import Auth
+from cred.resources.apikeys import *
 from cred.resources.events import *
 from cred.resources.clients import *
 from cred.resources.clients_events import *
 
+
+# Generate API keys and read (requires admin permissions)
+api.add_resource(
+    APIKeys,
+    '/apikeys',
+    endpoint='apikeys'
+)
+api.add_resource(
+    APIKeysItem,
+    '/apikeys/<int:apikey_id>',
+    endpoint='apikeys_item'
+)
 
 # Authentication of clients
 api.add_resource(
@@ -51,7 +76,7 @@ api.add_resource(
 )
 api.add_resource(
     EventsItem,
-    '/events/<int:id>',
+    '/events/<int:event_id>',
     endpoint='events_item'
 )
 
@@ -68,18 +93,18 @@ api.add_resource(
 )
 api.add_resource(
     ClientsItem,
-    '/clients/<int:id>',
+    '/clients/<int:client_id>',
     endpoint='clients_item'
 )
 
 # Events pertaining to a specific client
 api.add_resource(
     ClientsEvents,
-    '/clients/<int:id>/events',
+    '/clients/<int:client_id>/events',
     endpoint='clients_events'
 )
 api.add_resource(
     ClientsSubscribedEvents,
-    '/clients/<int:id>/subscribedevents',
+    '/clients/<int:client_id>/subscribedevents',
     endpoint='clients_subscribedevents'
 )

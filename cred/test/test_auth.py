@@ -8,7 +8,7 @@ class AuthTestCase(testutil.BaseTestCase):
 
     def test_client_can_authenticate(self):
         # Use the helper function to authenticate with the server
-        response = self.authenticate_with_server()
+        response = self.authenticate_with_server('read')
         # Decode the json response string into a python dictionary
         resp = json.loads(response.data.decode('utf-8'))
         # Check that we get the correct response

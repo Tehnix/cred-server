@@ -25,11 +25,11 @@ subscribed_event = {
 
 class EventTestCase(testutil.BaseTestCase):
 
-    @testutil.authenticate
+    @testutil.authenticate('write')
     def test_posting_a_complete_event(self):
         """Create a valid new event."""
         # Post the request to the test server
-        response = self.app.post(
+        response = self.client.post(
             '/events',
             data=json.dumps(test_event),
             content_type='application/json'
@@ -45,10 +45,28 @@ class EventTestCase(testutil.BaseTestCase):
             'uri' in resp['event']: True
         })
 
-    @testutil.authenticate
+    @testutil.authenticate('read')
+    def test_cannot_create_an_event_when_read(self):
+        """Test that you can't create an event with read permission."""
+        # Post the request to the test server
+        response = self.client.post(
+            '/events',
+            data=json.dumps(test_event),
+            content_type='application/json'
+        )
+        resp = json.loads(response.data.decode('utf-8'))
+
+        # Check that we get the correct response
+        testutil.assertEqual(self, {
+            response.status_code: 403,
+            resp['status']: 403,
+            resp['message']: 'Insufficient Permissions'
+        })
+
+    @testutil.authenticate('read')
     def test_access_events_when_none_are_created(self):
         """Fetch a list of events, when there are none."""
-        response = self.app.get('/events')
+        response = self.client.get('/events')
         resp = json.loads(response.data.decode('utf-8'))
         # Check that we get the correct response
         testutil.assertEqual(self, {
@@ -58,13 +76,13 @@ class EventTestCase(testutil.BaseTestCase):
         })
         self.assertCountEqual(resp['events'], [])
 
-    @testutil.authenticate
+    @testutil.authenticate('read')
     def test_getting_list_of_full_events(self):
         """Fetch a list of events with full information"""
         # Create a event that the client has subscribed to
         data = json.dumps(subscribed_event)
-        self.app.post('/events', data=data, content_type='application/json')
-        response = self.app.get('/events?full=true')
+        self.client.post('/events', data=data, content_type='application/json')
+        response = self.client.get('/events?full=true')
         resp = json.loads(response.data.decode('utf-8'))
         # Check that we actually get the full event in the feed
         testutil.assertEqual(self, {
@@ -80,18 +98,18 @@ class EventTestCase(testutil.BaseTestCase):
             'time' in resp['events'][0]: True,
         })
 
-    @testutil.authenticate
+    @testutil.authenticate('read')
     def test_getting_a_specific_event(self):
         """Fetch a specific event from an ID."""
         # Create an event, so we have something to request
-        response = self.app.post(
+        response = self.client.post(
             '/events',
             data=json.dumps(test_event),
             content_type='application/json'
         )
         event_resp = json.loads(response.data.decode('utf-8'))
         # Get the specific event
-        response = self.app.get('/events/' + str(event_resp['event']['id']))
+        response = self.client.get('/events/' + str(event_resp['event']['id']))
         resp = json.loads(response.data.decode('utf-8'))
         # Check that we get the correct response
         testutil.assertEqual(self, {
@@ -107,27 +125,27 @@ class EventTestCase(testutil.BaseTestCase):
             'time' in resp['event']: True
         })
 
-    @testutil.authenticate
+    @testutil.authenticate('read')
     def test_404_on_non_existant_event(self):
         """Try to fetch an event that doesn't exist."""
-        response = self.app.get('/events/0')
+        response = self.client.get('/events/0')
         resp = json.loads(response.data.decode('utf-8'))
         # Check that we get the correct response
         testutil.assertEqual(self, {
             response.status_code: 404,
             resp['status']: 404,
-            resp['message']: 'Event Not Found!'
+            resp['message']: 'Event Not Found'
         })
 
     def test_denied_access_without_authentication(self):
         """Check for events without being authenticated."""
-        response = self.app.get('/events')
+        response = self.client.get('/events')
         resp = json.loads(response.data.decode('utf-8'))
         # Check that we get the correct response
         testutil.assertEqual(self, {
             response.status_code: 401,
             resp['status']: 401,
-            resp['message']: 'Unauthorized'
+            resp['message']: 'Not Authenticated'
         })
 
 

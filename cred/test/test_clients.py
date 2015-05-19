@@ -9,10 +9,10 @@ class ClientsTestCase(testutil.BaseTestCase):
     def test_getting_a_list_of_clients(self):
         """Test getting a list of clients."""
         # Create different clients, by authenticating with them
-        self.authenticate_with_server(alternate_device='Alarm')
-        self.authenticate_with_server(alternate_device='Light')
-        self.authenticate_with_server(alternate_device='Thermostat')
-        response = self.app.get('/clients')
+        self.authenticate_with_server('read', alternate_device='Alarm')
+        self.authenticate_with_server('read', alternate_device='Light')
+        self.authenticate_with_server('read', alternate_device='Thermostat')
+        response = self.client.get('/clients')
         resp = json.loads(response.data.decode('utf-8'))
         testutil.assertEqual(self, {
             response.status_code: 200,
@@ -24,14 +24,15 @@ class ClientsTestCase(testutil.BaseTestCase):
             'uri' in resp['clients'][0]: True,
         })
 
-    def test_getting_a_list_of_clients(self):
+    def test_getting_a_list_of_clients_with_full_information(self):
         """Test getting a list of clients with full information."""
         # Create different clients, by authenticating with them
-        self.authenticate_with_server(alternate_device='Alarm')
-        self.authenticate_with_server(alternate_device='Light')
-        self.authenticate_with_server(alternate_device='Thermostat')
-        response = self.app.get('/clients?full=true')
+        self.authenticate_with_server('read', alternate_device='Alarm')
+        self.authenticate_with_server('read', alternate_device='Light')
+        self.authenticate_with_server('read', alternate_device='Thermostat')
+        response = self.client.get('/clients?full=true')
         resp = json.loads(response.data.decode('utf-8'))
+        print(resp)
         testutil.assertEqual(self, {
             response.status_code: 200,
             resp['status']: 200,
@@ -45,10 +46,10 @@ class ClientsTestCase(testutil.BaseTestCase):
     def test_getting_the_client_itself(self):
         """Test getting the client's own information"""
         # Create different clients, by authenticating with them
-        self.authenticate_with_server(alternate_device='Alarm')
-        self.authenticate_with_server(alternate_device='Light')
-        self.authenticate_with_server(alternate_device='Thermostat')
-        response = self.app.get('/clients/me')
+        self.authenticate_with_server('read', alternate_device='Alarm')
+        self.authenticate_with_server('read', alternate_device='Light')
+        self.authenticate_with_server('read', alternate_device='Thermostat')
+        response = self.client.get('/clients/me')
         resp = json.loads(response.data.decode('utf-8'))
         testutil.assertEqual(self, {
             response.status_code: 200,
@@ -63,11 +64,11 @@ class ClientsTestCase(testutil.BaseTestCase):
     def test_getting_a_client_by_id(self):
         """Test getting a specific client."""
         # Create different clients, by authenticating with them
-        self.authenticate_with_server(alternate_device='Alarm')
-        client2 = self.authenticate_with_server(alternate_device='Light')
-        self.authenticate_with_server(alternate_device='Thermostat')
+        self.authenticate_with_server('read', alternate_device='Alarm')
+        client2 = self.authenticate_with_server('read', alternate_device='Light')
+        self.authenticate_with_server('read', alternate_device='Thermostat')
         client2_resp = json.loads(client2.data.decode('utf-8'))
-        response = self.app.get('/clients/' + str(client2_resp['id']))
+        response = self.client.get('/clients/' + str(client2_resp['id']))
         resp = json.loads(response.data.decode('utf-8'))
         testutil.assertEqual(self, {
             response.status_code: 200,

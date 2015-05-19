@@ -6,16 +6,17 @@ Programming
 * A way to generate API keys
 
 ## Web Client
-* Javascript frontend that uses the API and displays it nicely
-* Either use a *very* simply framework, or just do it with JQuery
-* Having a self updating list of events that come in and clients that are online
+* Javascript front-end that uses the API and displays it nicely
+* Either use a *very* simply framework, or just do it with jQuery
+* Having a self updating list of events that come in and clients that are
+  online
 * Click in on a client and see what events that client has sent, and the events
   the client has subscribed to
 
 ## Client
 * A python class, that the implementer will subclass
-* Shall handle everything, and the implementer must only implement some abstract
-functions
+* Shall handle everything, and the implementer must only implement some
+  abstract functions
 * Make it read user input to simulate events
 * Make it output subscribed events
 

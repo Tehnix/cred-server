@@ -3,12 +3,13 @@ from collections import OrderedDict
 from flask import request
 from flask.ext.restful import reqparse, fields, marshal
 from cred import db
+from cred.exceptions import EventNotFound
 from cred.common import util
 from cred.models.event import Event as EventModel
 
 
 full_event_fields = {
-    'id': fields.Integer,
+    'id': fields.Integer(attribute='event_id'),
     'device': fields.String(attribute='client.device'),
     'name': fields.String,
     'location': fields.String,
@@ -19,12 +20,12 @@ full_event_fields = {
 }
 
 simple_event_fields = {
-    'id': fields.Integer,
+    'id': fields.Integer(attribute='event_id'),
     'uri': fields.Url('events_item', absolute=True),
 }
 
 
-def get_subscribed_events(client, full=False, after=None, before=None, limit=None, offset=None):
+def get_subscribed_events(request, client):
     # Get the events that the client subscribes to
     subscribes = client.subscribes
     # Put all events into a list of events
@@ -40,45 +41,22 @@ def get_subscribed_events(client, full=False, after=None, before=None, limit=Non
                 EventModel.location == subscribtion.location
             )
         # Add filters to the events, based on the request
-        subscribed_events = get_events(
+        subscribed_events = util.get_db_items(
+            request,
+            Model=EventModel,
+            default_fields=simple_event_fields,
+            full_fields=full_event_fields,
             base_query=subscribed_events,
-            full=full,
-            after=after,
-            before=before
         )
         events += subscribed_events
     # Sort the events on ID before returning them
     return sorted(events, key=lambda item: item['id'])
 
 
-def get_events(base_query=None, full=False, after=None, before=None, limit=None, offset=None):
-    if base_query is not None:
-        events = base_query
-    else:
-        events = EventModel.query
-    # Add filters to the events, based on the request
-    if before is not None:
-        events = events.filter(
-            EventModel.id < before
-        )
-    if after is not None:
-        events = events.filter(
-            EventModel.id > after
-        )
-    if limit is not None:
-        events = events.limit(limit)
-    if offset is not None:
-        events = events.offset(offset)
-    events = events.all()
-    if full:
-        return marshal(events, full_event_fields)
-    else:
-        return marshal(events, simple_event_fields)
-
-
 class Events(util.AuthenticatedResource):
     """Methods going to the /events route."""
 
+    @util.require_permission('write')
     def post(self):
         """Create a new event and return the id and uri of the event."""
         # Set up the parser for the root of the object
@@ -110,6 +88,7 @@ class Events(util.AuthenticatedResource):
             'event': marshal(event, simple_event_fields)
         }, 201
 
+    @util.require_permission('read')
     def get(self):
         """
         Get a list of all events.
@@ -123,12 +102,11 @@ class Events(util.AuthenticatedResource):
         which allows for a more fine-grained control.
 
         """
-        events = get_events(
-            full=request.args.get('full', False),
-            before=request.args.get('before', None),
-            after=request.args.get('after', None),
-            limit=request.args.get('limit', None),
-            offset=request.args.get('offset', None)
+        events = util.get_db_items(
+            request,
+            Model=EventModel,
+            default_fields=simple_event_fields,
+            full_fields=full_event_fields
         )
         if not events:
             events = []
@@ -142,15 +120,13 @@ class Events(util.AuthenticatedResource):
 class EventsItem(util.AuthenticatedResource):
     """Methods going to the /events/<int:id> route."""
 
-    def get(self, id):
+    @util.require_permission('read')
+    def get(self, event_id):
         """Fetch a specific event."""
         # Get the last event (it is sorted descending by id)
-        event = EventModel.query.filter_by(id=id).first()
+        event = EventModel.query.filter_by(event_id=event_id).first()
         if not event:
-            return {
-                'status': 404,
-                'message': 'Event Not Found!'
-            }, 404
+            raise EventNotFound()
         return {
             'status': 200,
             'message': 'OK',

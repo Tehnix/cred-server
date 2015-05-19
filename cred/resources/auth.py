@@ -4,16 +4,18 @@ import time
 import json
 from flask.ext.restful import Resource, reqparse
 from cred import db
-from cred.models.client import Client
-from cred.models.subscribe import Subscribe
+from cred.exceptions import NotAuthenticated
+from cred.models.apikey import APIKey as APIKeyModel
+from cred.models.client import Client as ClientModel
+from cred.models.subscribe import Subscribe as SubscribeModel
 
 
-def create_client_session_key(api_key):
+def create_client_session_key(apikey):
     """Create a unique session key for the client."""
     session_key = hashlib.sha256()
     session_key.update(str(random.getrandbits(255)).encode('utf-8'))
     session_key.update(str(time.time()).encode('utf-8'))
-    session_key.update(api_key.encode('utf-8'))
+    session_key.update(apikey.encode('utf-8'))
     return session_key.hexdigest()
 
 
@@ -22,15 +24,15 @@ def subscribe_to_events(client, subscribe):
         location = None
         if 'location' in subscribe[device]:
             location = subscribe[device]['location']
-        sub = Subscribe(client, device, location)
+        sub = SubscribeModel(client, device, location)
         db.session.add(sub)
 
 
 class Auth(Resource):
-    """Authenticate the client, and schedule it if implemented."""
+    """Methods going to the /auth route."""
 
     def post(self):
-        # Set up the parser for the root of the object
+        """Authenticate the client, and schedule it if implemented."""
         parser = reqparse.RequestParser()
         parser.add_argument(
             'apiKey',
@@ -40,13 +42,20 @@ class Auth(Resource):
             help="An API key is required!")
         parser.add_argument('device', type=str)
         parser.add_argument('location', type=str)
-        parser.add_argument('events', type=str, action='append')
         parser.add_argument('subscribe', type=dict)
         pargs = parser.parse_args()
 
+        apikey = APIKeyModel.query.filter_by(apikey=pargs['apiKey']).first()
+        if pargs['apiKey'] is None or not apikey:
+            raise NotAuthenticated()
         session_key = create_client_session_key(pargs['apiKey'])
         # Register the client information to the session key
-        client = Client(pargs['device'], pargs['location'], session_key)
+        client = ClientModel(
+            pargs['device'],
+            pargs['location'],
+            session_key,
+            apikey
+        )
         db.session.add(client)
         # Subscribe the client to the requested events
         subscribe_to_events(client, pargs['subscribe'])
@@ -60,7 +69,7 @@ class Auth(Resource):
         return {
             'status': 201,
             'message': 'Authenticated',
-            'id': client.id,
+            'id': client.client_id,
             'sessionKey': session_key,
             'scheduled': {
                 'assigned': False,

@@ -1,13 +1,15 @@
 import os
 import tempfile
-import unittest
 import json
 from functools import wraps
+from flask.ext.testing import TestCase
+from flask.ext.sqlalchemy import SQLAlchemy
 import cred
+from cred.models.apikey import APIKey as APIKeyModel
+from cred.resources.apikeys import generate_apikey
 
 
 # Constants used throughout the test suites
-API_KEY = 'uJidciTE1fuJXf37gs8MgPskMjYLxe'
 DEVICE = 'Thermostat'
 LOCATION = 'Living Room'
 EVENTS = ['Temperature']
@@ -23,44 +25,57 @@ def assertEqual(test_object, assertables):
         test_object.assertEqual(value, expected_value)
 
 
-def authenticate(fun):
-    """Decorator for authenticating a client."""
-    @wraps(fun)
-    def wrapped(self, *args, **kwargs):
-        self.authenticate_with_server()
-        fun(self, *args, **kwargs)
-    return wrapped
+def authenticate(permission, alt_dev=None):
+    """Decorator for authenticating a client with permissions."""
+    def authenticate_decorator(fun):
+        @wraps(fun)
+        def wrapped(self, *args, **kwargs):
+            self.authenticate_with_server(permission, alternate_device=alt_dev)
+            fun(self, *args, **kwargs)
+        return wrapped
+    return authenticate_decorator
 
 
-class BaseTestCase(unittest.TestCase):
+class BaseTestCase(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        return self.setUp()
+
     def setUp(self):
         """Create a SQLite database for quick testing."""
         self.db_file_descriptor, self.dbfile = tempfile.mkstemp()
         cred.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'
         cred.app.config['SQLALCHEMY_DATABASE_URI'] += self.dbfile
         cred.app.config['TESTING'] = True
-        self.app = cred.app.test_client()
-        self.session_key = None
         cred.initDB()
+        self.apikey = APIKeyModel(generate_apikey(), 'write')
+        cred.db.session.add(self.apikey)
+        cred.db.session.commit()
+        self.session_key = None
+        return cred.app
 
     def tearDown(self):
         """Close the database file and unlink it."""
+        cred.db.drop_all()
         os.close(self.db_file_descriptor)
         os.unlink(self.dbfile)
 
-    def authenticate_with_server(self, alternate_device=None):
+    def authenticate_with_server(self, permission, alternate_device=None):
         """Authenticate with the server."""
         device = DEVICE
         if alternate_device is not None:
             device = alternate_device
+        apikey = APIKeyModel(generate_apikey(), permission)
+        cred.db.session.add(apikey)
+        cred.db.session.commit()
         req = json.dumps({
-            'apiKey': API_KEY,
+            'apiKey': apikey.apikey,
             'device': device,
             'location': LOCATION,
-            'events': EVENTS,
             'subscribe': SUBSCRIBE
         })
-        response = self.app.post(
+        response = self.client.post(
             '/auth',
             data=req,
             content_type='application/json')

@@ -3,52 +3,28 @@ from collections import OrderedDict
 from flask import request
 from flask.ext.restful import reqparse, fields, marshal
 from cred import db
+from cred.exceptions import ClientNotFound
 from cred.common import util
 from cred.models.client import Client as ClientModel
-from cred.resources.events import get_events, get_subscribed_events
 
 
 full_client_fields = {
-    'id': fields.Integer,
+    'id': fields.Integer(attribute='client_id'),
     'device': fields.String,
     'location': fields.String,
     'uri': fields.Url('clients_item', absolute=True),
 }
 
 simple_client_fields = {
-    'id': fields.Integer,
+    'id': fields.Integer(attribute='client_id'),
     'uri': fields.Url('clients_item', absolute=True),
 }
-
-
-def get_clients(base_query=None, full=False, after=None, before=None, limit=None, offset=None):
-    if base_query is not None:
-        clients = base_query
-    else:
-        clients = ClientModel.query
-    # Add filters to the clients, based on the request
-    if before is not None:
-        clients = clients.filter(
-            ClientModel.id < before
-        )
-    if after is not None:
-        clients = clients.filter(
-            ClientModel.id > after
-        )
-    if limit is not None:
-        clients = clients.limit(limit)
-    if offset is not None:
-        clients = clients.offset(offset)
-    clients = clients.all()
-    if full:
-        return marshal(clients, full_client_fields)
-    else:
-        return marshal(clients, simple_client_fields)
 
 
 class Clients(util.AuthenticatedResource):
     """Methods going to the /clients route."""
 
+    @util.require_permission('read')
     def get(self):
         """
         Get a list of all active clients.
@@ -62,12 +38,11 @@ class Clients(util.AuthenticatedResource):
         which allows for a more fine-grained control.
 
         """
-        clients = get_clients(
-            full=request.args.get('full', False),
-            before=request.args.get('before', None),
-            after=request.args.get('after', None),
-            limit=request.args.get('limit', None),
-            offset=request.args.get('offset', None)
+        clients = util.get_db_items(
+            request,
+            Model=ClientModel,
+            default_fields=simple_client_fields,
+            full_fields=full_client_fields
         )
         return {
             'status': 200,
@@ -79,14 +54,12 @@ class Clients(util.AuthenticatedResource):
 class ClientsMe(util.AuthenticatedResource):
     """Methods going to the /clients/me route."""
 
+    @util.require_permission('read')
     def get(self):
         """Fetch information about the client itself."""
         client = self.client
         if not client:
-            return {
-                'status': 404,
-                'message': 'Client Not Found!'
-            }, 404
+            raise ClientNotFound()
         return {
             'status': 200,
             'message': 'OK',
@@ -97,14 +70,12 @@ class ClientsMe(util.AuthenticatedResource):
 class ClientsItem(util.AuthenticatedResource):
     """Methods going to the /clients/<int:id> route."""
 
-    def get(self, id):
+    @util.require_permission('read')
+    def get(self, client_id):
         """Fetch information about a specific client."""
-        client = ClientModel.query.filter_by(id=id).first()
+        client = ClientModel.query.filter_by(client_id=client_id).first()
         if not client:
-            return {
-                'status': 404,
-                'message': 'Client Not Found!'
-            }, 404
+            raise ClientNotFound()
         return {
             'status': 200,
             'message': 'OK',

@@ -3,15 +3,18 @@ from collections import OrderedDict
 from flask import request
 from flask.ext.restful import reqparse, fields, marshal
 from cred import db
+from cred.exceptions import ClientNotFound
 from cred.common import util
 from cred.models.client import Client as ClientModel
-from cred.resources.events import get_events, get_subscribed_events
+from cred.models.event import Event as EventModel
+from cred.resources.events import get_subscribed_events, simple_event_fields, full_event_fields
 
 
 class ClientsEvents(util.AuthenticatedResource):
     """Methods going to the /clients/<int:id>/events route."""
 
-    def get(self, id):
+    @util.require_permission('read')
+    def get(self, client_id):
         """
         Get a list of all events the client has created.
 
@@ -24,19 +27,15 @@ class ClientsEvents(util.AuthenticatedResource):
         which allows for a more fine-grained control.
 
         """
-        client = ClientModel.query.filter_by(id=id).first()
+        client = ClientModel.query.filter_by(client_id=client_id).first()
         if not client:
-            return {
-                'status': 404,
-                'message': 'Client Not Found!'
-            }, 404
-        events = get_events(
-            base_query=client.events,
-            full=request.args.get('full', False),
-            before=request.args.get('before', None),
-            after=request.args.get('after', None),
-            limit=request.args.get('limit', None),
-            offset=request.args.get('offset', None)
+            raise ClientNotFound()
+        events = util.get_db_items(
+            request,
+            Model=EventModel,
+            default_fields=simple_event_fields,
+            full_fields=full_event_fields,
+            base_query=client.events
         )
         if not events:
             return {
@@ -54,7 +53,8 @@ class ClientsEvents(util.AuthenticatedResource):
 class ClientsSubscribedEvents(util.AuthenticatedResource):
     """Methods going to the /clients/<int:id>/subscribedevents route."""
 
-    def get(self, id):
+    @util.require_permission('read')
+    def get(self, client_id):
         """
         Get a list of all events the client has subscribed to.
 
@@ -67,19 +67,12 @@ class ClientsSubscribedEvents(util.AuthenticatedResource):
         which allows for a more fine-grained control.
 
         """
-        client = ClientModel.query.filter_by(id=id).first()
+        client = ClientModel.query.filter_by(client_id=client_id).first()
         if not client:
-            return {
-                'status': 404,
-                'message': 'Client Not Found!'
-            }, 404
+            raise ClientNotFound()
         events = get_subscribed_events(
-            client,
-            full=request.args.get('full', False),
-            before=request.args.get('before', None),
-            after=request.args.get('after', None),
-            limit=request.args.get('limit', None),
-            offset=request.args.get('offset', None)
+            request,
+            client
         )
         if not events:
             return {
