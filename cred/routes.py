@@ -38,7 +38,9 @@ is,
 |---------------------------------|--------|
 | /apikeys                        | GET    |
 | /apikeys                        | POST   |
+| /apikeys/<int>                  | GET    |
 
+Where the GET requests also accept the parameters mentioned earlier.
 
 """
 from cred import api
