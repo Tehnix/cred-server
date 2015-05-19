@@ -20,6 +20,22 @@ functions
 * Make it output subscribed events
 
 
+## Authentication
+* Permissions based on API key
+    * Read can access all GETs
+    * Write can access all GETs and (almost) all POST
+    * Admin can access API key generation and everything else
+* CLI util, that uses SQLAlchemy, to generate API keys
+    * cred-gen --read
+    * cred-gen --write
+    * cred-gen --admin
+    * and --config=/path/to/config
+* API endpoint to generate API key
+    * POST /generateapikey
+        * {'permission': 'read'}
+        * {'permission': 'write'}
+* Admins can only be generated from the CLI util (safety reasons?)
+
 
 Writing
 ===

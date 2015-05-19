@@ -6,7 +6,6 @@ import cred.test.util as testutil
 
 test_event = {
     'event': {
-        'device': testutil.DEVICE,
         'name': 'Temperature',
         'location': 'Living Room',
         'action': 'Temperature Above Setting',
@@ -16,7 +15,6 @@ test_event = {
 
 subscribed_event = {
     'event': {
-        'device': 'Lamp',
         'name': 'Light',
         'location': 'Living Room',
         'action': 'Light Changed',
@@ -26,7 +24,6 @@ subscribed_event = {
 
 not_subscribed_event = {
     'event': {
-        'device': 'Lamp',
         'name': 'Light',
         'location': 'Lobby',
         'action': 'Light Changed',

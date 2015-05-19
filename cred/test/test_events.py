@@ -6,7 +6,6 @@ import cred.test.util as testutil
 
 test_event = {
     'event': {
-        'device': testutil.DEVICE,
         'name': 'Temperature',
         'location': 'Living Room',
         'action': 'Temperature Above Setting',
@@ -16,7 +15,6 @@ test_event = {
 
 subscribed_event = {
     'event': {
-        'device': 'Lamp',
         'name': 'Light',
         'location': 'Living Room',
         'action': 'Light Changed',
@@ -101,7 +99,7 @@ class EventTestCase(testutil.BaseTestCase):
             resp['status']: 200,
             resp['message']: 'OK',
             resp['event']['name']: test_event['event']['name'],
-            resp['event']['device']: test_event['event']['device'],
+            resp['event']['device']: testutil.DEVICE,
             resp['event']['action']: test_event['event']['action'],
             resp['event']['value']: test_event['event']['value'],
             'id' in resp['event']: True,
