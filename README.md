@@ -44,13 +44,22 @@ The URL endpoints and their functionality are described below,
 | `/clients/<int>/events`           | GET    | Return IDs of all events from the client  |
 | `/clients/<int>/subscribedevents` | GET    | Return IDs of all events the client has subscribed to |
 
+The above resources are accessible with read permissions for all GETs and write for all POSTs and GETs.
+
+| Resource                        | Method | Function |
+|---------------------------------|--------|----------|
+| `/apikeys`                      | GET    | Return IDs of all API keys |
+| `/apikeys`                      | POST   | Generate a new API key |
+| `/apikeys/<int>`                | GET    | Return information about a specific API key |
+
+These resources are special, and require admin permissions.
 
 ### Parameters
 
 Additionally the following query parameters can also be appended to the
 resource, for extra fine-tuning. The parameters below work when using GET
-requests on the following resources: /events and /clients. And both GET and PUT
-on: /clients/<int>/subscribedevents
+requests on the following resources: /events and /clients,
+/clients/<int>/events, /clients/<int>/subscribedevents and /apikeys.
 
 | Parameter      | Function                                           |
 |----------------|----------------------------------------------------|
