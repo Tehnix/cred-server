@@ -80,6 +80,17 @@ class ClientsTestCase(testutil.BaseTestCase):
             'uri' in resp['client']: True,
         })
 
+    @testutil.authenticate('read')
+    def test_getting_a_client_by_id_that_does_not_exist(self):
+        """Test getting a client that doesn't exist."""
+        response = self.client.get('/clients/0')
+        resp = json.loads(response.data.decode('utf-8'))
+        testutil.assertEqual(self, {
+            response.status_code: 404,
+            resp['status']: 404,
+            resp['message']: 'Client Not Found',
+        })
+
 
 if __name__ == '__main__':
     unittest.main()

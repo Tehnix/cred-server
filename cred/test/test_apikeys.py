@@ -8,7 +8,7 @@ class APIKeyTestCase(testutil.BaseTestCase):
 
     @testutil.authenticate('admin')
     def test_creating_apikey(self):
-        """Test creating an API key."""
+        """Create an API key."""
         # Post the request to the test server
         response = self.client.post(
             '/apikeys',
@@ -26,6 +26,23 @@ class APIKeyTestCase(testutil.BaseTestCase):
             'apikey' in resp['apikey']: True,
             'created' in resp['apikey']: True,
             'uri' in resp['apikey']: True
+        })
+
+    @testutil.authenticate('admin')
+    def test_creating_apikey_with_invalid_permissions(self):
+        """Cannot create an API key with invalid permissions."""
+        # Post the request to the test server
+        response = self.client.post(
+            '/apikeys',
+            data=json.dumps({'permission': 'this is invalid'}),
+            content_type='application/json'
+        )
+        resp = json.loads(response.data.decode('utf-8'))
+        # Check that we get the correct response
+        testutil.assertEqual(self, {
+            response.status_code: 400,
+            resp['status']: 400,
+            resp['message']: 'Invalid Permissions',
         })
 
     @testutil.authenticate('read')
@@ -132,6 +149,17 @@ class APIKeyTestCase(testutil.BaseTestCase):
             'apikey' in resp['apikey']: True,
             'created' in resp['apikey']: True,
             'uri' in resp['apikey']: True,
+        })
+
+    @testutil.authenticate('admin')
+    def test_getting_a_specific_apikey_that_does_not_exist(self):
+        """Get a specific API key from an ID that doesn't exist."""
+        response = self.client.get('/apikeys/0')
+        resp = json.loads(response.data.decode('utf-8'))
+        testutil.assertEqual(self, {
+            response.status_code: 404,
+            resp['status']: 404,
+            resp['message']: 'API Key Not Found'
         })
 
     @testutil.authenticate('read')

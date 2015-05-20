@@ -56,20 +56,20 @@ def add_nested_arguments(top_pargs, location, args):
 
 
 # FIXME: Make the decorator work.
-def require_permission(permission):
-    """Decorator for specifying access permissions."""
-    def permission_decorator(fun):
-        @wraps(fun)
-        def wrapped(self, *args, **kwargs):
-            if permission == 'admin':
-                self.require_admin_permission()
-            elif permission == 'write':
-                self.require_write_permission()
-            elif permission == 'read':
-                self.require_read_permission()
-            fun(self, *args, **kwargs)
-        return wrapped
-    return permission_decorator
+# def require_permission(permission):
+#     """Decorator for specifying access permissions."""
+#     def permission_decorator(fun):
+#         @wraps(fun)
+#         def wrapped(self, *args, **kwargs):
+#             if permission == 'admin':
+#                 self.require_admin_permission()
+#             elif permission == 'write':
+#                 self.require_write_permission()
+#             elif permission == 'read':
+#                 self.require_read_permission()
+#             fun(self, *args, **kwargs)
+#         return wrapped
+#     return permission_decorator
 
 
 class AuthenticatedResource(Resource):

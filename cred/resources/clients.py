@@ -58,8 +58,6 @@ class ClientsMe(util.AuthenticatedResource):
         """Fetch information about the client itself."""
         self.require_read_permission()
         client = self.client
-        if not client:
-            raise ClientNotFound()
         return {
             'status': 200,
             'message': 'OK',

@@ -34,12 +34,7 @@ class Auth(Resource):
     def post(self):
         """Authenticate the client, and schedule it if implemented."""
         parser = reqparse.RequestParser()
-        parser.add_argument(
-            'apiKey',
-            type=str,
-            required=True,
-            location='json',
-            help="An API key is required!")
+        parser.add_argument('apiKey', type=str)
         parser.add_argument('device', type=str)
         parser.add_argument('location', type=str)
         parser.add_argument('subscribe', type=dict)

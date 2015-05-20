@@ -4,7 +4,7 @@ import hashlib
 import base64
 from flask.ext.restful import reqparse, fields, marshal, request
 from cred import db
-from cred.exceptions import InvalidPermissions
+from cred.exceptions import InvalidPermissions, APIKeyNotFound
 from cred.common import util
 from cred.models.apikey import APIKey as APIKeyModel
 

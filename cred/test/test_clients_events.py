@@ -71,6 +71,31 @@ class ClientsEventsTestCase(testutil.BaseTestCase):
             d4['event']['id']: resp['events'][2]['id'],
         })
 
+    @testutil.authenticate('read')
+    def test_getting_list_of_clients_events_with_non_made(self):
+        """Fetch a list of a clients events, when there are none."""
+        # Create an event that the client is not subscribed to
+        response = self.client.get('/clients/1/events')
+        resp = json.loads(response.data.decode('utf-8'))
+        # Check that we get the correct response
+        testutil.assertEqual(self, {
+            response.status_code: 200,
+            resp['status']: 200,
+            resp['message']: 'OK',
+        })
+        self.assertCountEqual(resp['events'], [])
+
+    @testutil.authenticate('read')
+    def test_getting_events_from_client_that_does_not_exist(self):
+        """Test getting a list of events from a client that doesn't exist."""
+        response = self.client.get('/clients/0/events')
+        resp = json.loads(response.data.decode('utf-8'))
+        testutil.assertEqual(self, {
+            response.status_code: 404,
+            resp['status']: 404,
+            resp['message']: 'Client Not Found',
+        })
+
     @testutil.authenticate('write')
     def test_getting_list_of_clients_subscribed_events(self):
         """Fetch a list of a clients subscribed events."""
@@ -115,6 +140,38 @@ class ClientsEventsTestCase(testutil.BaseTestCase):
             d3['event']['id']: resp['events'][1]['id'],
             d4['event']['id']: resp['events'][2]['id'],
         })
+
+    @testutil.authenticate('read')
+    def test_getting_subscribedevents_from_client_that_does_not_exist(self):
+        """
+        Test getting a list of subscribedevents from a client that doesn't
+        exist.
+
+        """
+        response = self.client.get('/clients/0/subscribedevents')
+        resp = json.loads(response.data.decode('utf-8'))
+        testutil.assertEqual(self, {
+            response.status_code: 404,
+            resp['status']: 404,
+            resp['message']: 'Client Not Found',
+        })
+
+    @testutil.authenticate('read')
+    def test_getting_list_of_clients_subscribed_events_with_non_made(self):
+        """
+        Fetch a list of a clients subscribed events, when there are none.
+
+        """
+        # Create an event that the client is not subscribed to
+        response = self.client.get('/clients/1/subscribedevents')
+        resp = json.loads(response.data.decode('utf-8'))
+        # Check that we get the correct response
+        testutil.assertEqual(self, {
+            response.status_code: 200,
+            resp['status']: 200,
+            resp['message']: 'OK',
+        })
+        self.assertCountEqual(resp['events'], [])
 
 
 if __name__ == '__main__':

@@ -41,11 +41,11 @@ class BaseTestCase(TestCase):
     TESTING = True
 
     def create_app(self):
+        self.client = cred.app.test_client()
         return cred.app
 
     def setUp(self):
         """Create a SQLite database for quick testing."""
-        self.client = cred.app.test_client()
         cred.initDB()
         self.session_key = None
 
@@ -71,7 +71,8 @@ class BaseTestCase(TestCase):
         response = self.client.post(
             '/auth',
             data=req,
-            content_type='application/json')
+            content_type='application/json'
+        )
         resp = json.loads(response.data.decode('utf-8'))
         self.session_key = resp['sessionKey']
         self.client_id = resp['id']
