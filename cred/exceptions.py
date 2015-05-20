@@ -8,9 +8,16 @@ class NotAuthenticated(Exception):
     status = 401
     message = 'Not Authenticated'
 
+
 class InsufficientPermissions(Exception):
     status = 403
     message = "Insufficient Permissions"
+
+
+class InvalidPermissions(Exception):
+    status = 400
+    message = "Invalid Permissions"
+
 
 class ClientNotFound(Exception):
     status = 404
@@ -20,6 +27,7 @@ class ClientNotFound(Exception):
 class EventNotFound(Exception):
     status = 404
     message = 'Event Not Found'
+
 
 class APIKeyNotFound(Exception):
     status = 404

@@ -35,7 +35,6 @@ class EventTestCase(testutil.BaseTestCase):
             content_type='application/json'
         )
         resp = json.loads(response.data.decode('utf-8'))
-
         # Check that we get the correct response
         testutil.assertEqual(self, {
             response.status_code: 201,
@@ -55,7 +54,6 @@ class EventTestCase(testutil.BaseTestCase):
             content_type='application/json'
         )
         resp = json.loads(response.data.decode('utf-8'))
-
         # Check that we get the correct response
         testutil.assertEqual(self, {
             response.status_code: 403,
@@ -76,7 +74,7 @@ class EventTestCase(testutil.BaseTestCase):
         })
         self.assertCountEqual(resp['events'], [])
 
-    @testutil.authenticate('read')
+    @testutil.authenticate('write')
     def test_getting_list_of_full_events(self):
         """Fetch a list of events with full information"""
         # Create a event that the client has subscribed to
@@ -98,7 +96,7 @@ class EventTestCase(testutil.BaseTestCase):
             'time' in resp['events'][0]: True,
         })
 
-    @testutil.authenticate('read')
+    @testutil.authenticate('write')
     def test_getting_a_specific_event(self):
         """Fetch a specific event from an ID."""
         # Create an event, so we have something to request

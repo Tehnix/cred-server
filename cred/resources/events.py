@@ -56,9 +56,9 @@ def get_subscribed_events(request, client):
 class Events(util.AuthenticatedResource):
     """Methods going to the /events route."""
 
-    @util.require_permission('write')
     def post(self):
         """Create a new event and return the id and uri of the event."""
+        self.require_write_permission()
         # Set up the parser for the root of the object
         parser = reqparse.RequestParser()
         parser.add_argument('event', type=dict)
@@ -88,7 +88,6 @@ class Events(util.AuthenticatedResource):
             'event': marshal(event, simple_event_fields)
         }, 201
 
-    @util.require_permission('read')
     def get(self):
         """
         Get a list of all events.
@@ -102,6 +101,7 @@ class Events(util.AuthenticatedResource):
         which allows for a more fine-grained control.
 
         """
+        self.require_read_permission()
         events = util.get_db_items(
             request,
             Model=EventModel,
@@ -120,9 +120,9 @@ class Events(util.AuthenticatedResource):
 class EventsItem(util.AuthenticatedResource):
     """Methods going to the /events/<int:id> route."""
 
-    @util.require_permission('read')
     def get(self, event_id):
         """Fetch a specific event."""
+        self.require_read_permission()
         # Get the last event (it is sorted descending by id)
         event = EventModel.query.filter_by(event_id=event_id).first()
         if not event:

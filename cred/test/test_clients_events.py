@@ -34,20 +34,33 @@ not_subscribed_event = {
 
 class ClientsEventsTestCase(testutil.BaseTestCase):
 
-    @testutil.authenticate('read')
+    @testutil.authenticate('write')
     def test_getting_list_of_clients_events(self):
-        """Fetch a list of a clients subscribed events."""
+        """Fetch a list of a clients events."""
         # Create some events in the database
         data = json.dumps(subscribed_event)
-        r = self.client.post('/events', data=data, content_type='application/json')
+        r = self.client.post(
+            '/events',
+            data=data,
+            content_type='application/json'
+        )
         d2 = json.loads(r.data.decode('utf-8'))
-        r = self.client.post('/events', data=data, content_type='application/json')
+        r = self.client.post(
+            '/events',
+            data=data,
+            content_type='application/json'
+        )
         d3 = json.loads(r.data.decode('utf-8'))
-        r = self.client.post('/events', data=data, content_type='application/json')
+        r = self.client.post(
+            '/events',
+            data=data,
+            content_type='application/json'
+        )
         d4 = json.loads(r.data.decode('utf-8'))
         # Check the server for new events
         response = self.client.get('/clients/%s/events' % self.client_id)
         resp = json.loads(response.data.decode('utf-8'))
+        print(resp)
         # Check that we get the correct response
         testutil.assertEqual(self, {
             response.status_code: 200,
@@ -58,7 +71,7 @@ class ClientsEventsTestCase(testutil.BaseTestCase):
             d4['event']['id']: resp['events'][2]['id'],
         })
 
-    @testutil.authenticate('read')
+    @testutil.authenticate('write')
     def test_getting_list_of_clients_subscribed_events(self):
         """Fetch a list of a clients subscribed events."""
         # Create an event that the client is not subscribed to
@@ -70,14 +83,28 @@ class ClientsEventsTestCase(testutil.BaseTestCase):
         d1 = json.loads(r.data.decode('utf-8'))
         # Create some events in the database that the client is subscribed to
         data = json.dumps(subscribed_event)
-        r = self.client.post('/events', data=data, content_type='application/json')
+        r = self.client.post(
+            '/events',
+            data=data,
+            content_type='application/json'
+        )
         d2 = json.loads(r.data.decode('utf-8'))
-        r = self.client.post('/events', data=data, content_type='application/json')
+        r = self.client.post(
+            '/events',
+            data=data,
+            content_type='application/json'
+        )
         d3 = json.loads(r.data.decode('utf-8'))
-        r = self.client.post('/events', data=data, content_type='application/json')
+        r = self.client.post(
+            '/events',
+            data=data,
+            content_type='application/json'
+        )
         d4 = json.loads(r.data.decode('utf-8'))
         # Check the server for new events
-        response = self.client.get('/clients/%s/subscribedevents' % self.client_id)
+        response = self.client.get(
+            '/clients/%s/subscribedevents' % self.client_id
+        )
         resp = json.loads(response.data.decode('utf-8'))
         # Check that we get the correct response
         testutil.assertEqual(self, {

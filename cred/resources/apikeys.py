@@ -2,14 +2,15 @@ import time
 import random
 import hashlib
 import base64
-from flask.ext.restful import Resource, reqparse, fields
+from flask.ext.restful import reqparse, fields, marshal, request
 from cred import db
+from cred.exceptions import InvalidPermissions
 from cred.common import util
 from cred.models.apikey import APIKey as APIKeyModel
 
 
 full_apikey_fields = {
-    'id': fields.Integer(attribute='client_id'),
+    'id': fields.Integer(attribute='apikey_id'),
     'apikey': fields.String,
     'permission': fields.String,
     'created': fields.DateTime(dt_format='rfc822'),
@@ -17,7 +18,7 @@ full_apikey_fields = {
 }
 
 simple_apikey_fields = {
-    'id': fields.Integer(attribute='client_id'),
+    'id': fields.Integer(attribute='apikey_id'),
     'uri': fields.Url('apikeys_item', absolute=True),
 }
 
@@ -45,7 +46,6 @@ def generate_apikey():
 class APIKeys(util.AuthenticatedResource):
     """Methods going to the /apikeys route."""
 
-    @util.require_permission('admin')
     def post(self):
         """
         Create an API key with specified permissions.
@@ -56,6 +56,7 @@ class APIKeys(util.AuthenticatedResource):
             admin - access to creating a API keys and everything else
 
         """
+        self.require_admin_permission()
         parser = reqparse.RequestParser()
         parser.add_argument(
             'permission',
@@ -65,20 +66,16 @@ class APIKeys(util.AuthenticatedResource):
             help="A permission level needs to be specified")
         pargs = parser.parse_args()
         if pargs['permission'] not in ['read', 'write', 'admin']:
-            return {
-                'status': 400,
-                'message': 'Invalid Permissions!'
-            }, 400
+            raise InvalidPermissions()
         apikey = APIKeyModel(generate_apikey(), pargs['permission'])
         db.session.add(apikey)
-        db.session.commit(apikey)
+        db.session.commit()
         return {
             'status': 201,
             'message': 'Created API Key',
-            'apiKey': marshal(apikey, full_apikey_fields)
-        }
+            'apikey': marshal(apikey, full_apikey_fields)
+        }, 201
 
-    @util.require_permission('admin')
     def get(self):
         """
         Get a list of all API keys.
@@ -92,6 +89,7 @@ class APIKeys(util.AuthenticatedResource):
         which allows for a more fine-grained control.
 
         """
+        self.require_admin_permission()
         apikeys = util.get_db_items(
             request,
             Model=APIKeyModel,
@@ -108,11 +106,11 @@ class APIKeys(util.AuthenticatedResource):
 class APIKeysItem(util.AuthenticatedResource):
     """Methods going to the /apikeys/<int:id> route."""
 
-    @util.require_permission('admin')
     def get(self, apikey_id):
         """Fetch information about a specific API key."""
+        self.require_admin_permission()
         apikey = APIKeyModel.query.filter_by(apikey_id=apikey_id).first()
-        if not client:
+        if not apikey:
             raise APIKeyNotFound()
         return {
             'status': 200,

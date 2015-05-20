@@ -55,6 +55,7 @@ def add_nested_arguments(top_pargs, location, args):
     return parser.parse_args(req=top_pargs)
 
 
+# FIXME: Make the decorator work.
 def require_permission(permission):
     """Decorator for specifying access permissions."""
     def permission_decorator(fun):

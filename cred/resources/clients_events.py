@@ -13,7 +13,6 @@ from cred.resources.events import get_subscribed_events, simple_event_fields, fu
 class ClientsEvents(util.AuthenticatedResource):
     """Methods going to the /clients/<int:id>/events route."""
 
-    @util.require_permission('read')
     def get(self, client_id):
         """
         Get a list of all events the client has created.
@@ -27,6 +26,7 @@ class ClientsEvents(util.AuthenticatedResource):
         which allows for a more fine-grained control.
 
         """
+        self.require_read_permission()
         client = ClientModel.query.filter_by(client_id=client_id).first()
         if not client:
             raise ClientNotFound()
@@ -53,7 +53,6 @@ class ClientsEvents(util.AuthenticatedResource):
 class ClientsSubscribedEvents(util.AuthenticatedResource):
     """Methods going to the /clients/<int:id>/subscribedevents route."""
 
-    @util.require_permission('read')
     def get(self, client_id):
         """
         Get a list of all events the client has subscribed to.
@@ -67,6 +66,7 @@ class ClientsSubscribedEvents(util.AuthenticatedResource):
         which allows for a more fine-grained control.
 
         """
+        self.require_read_permission()
         client = ClientModel.query.filter_by(client_id=client_id).first()
         if not client:
             raise ClientNotFound()

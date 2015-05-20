@@ -24,7 +24,6 @@ simple_client_fields = {
 class Clients(util.AuthenticatedResource):
     """Methods going to the /clients route."""
 
-    @util.require_permission('read')
     def get(self):
         """
         Get a list of all active clients.
@@ -38,6 +37,7 @@ class Clients(util.AuthenticatedResource):
         which allows for a more fine-grained control.
 
         """
+        self.require_read_permission()
         clients = util.get_db_items(
             request,
             Model=ClientModel,
@@ -54,9 +54,9 @@ class Clients(util.AuthenticatedResource):
 class ClientsMe(util.AuthenticatedResource):
     """Methods going to the /clients/me route."""
 
-    @util.require_permission('read')
     def get(self):
         """Fetch information about the client itself."""
+        self.require_read_permission()
         client = self.client
         if not client:
             raise ClientNotFound()
@@ -70,9 +70,9 @@ class ClientsMe(util.AuthenticatedResource):
 class ClientsItem(util.AuthenticatedResource):
     """Methods going to the /clients/<int:id> route."""
 
-    @util.require_permission('read')
     def get(self, client_id):
         """Fetch information about a specific client."""
+        self.require_read_permission()
         client = ClientModel.query.filter_by(client_id=client_id).first()
         if not client:
             raise ClientNotFound()

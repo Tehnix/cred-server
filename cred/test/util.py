@@ -37,29 +37,22 @@ def authenticate(permission, alt_dev=None):
 
 
 class BaseTestCase(TestCase):
+    SQLALCHEMY_DATABASE_URI = "sqlite://"
     TESTING = True
 
     def create_app(self):
-        return self.setUp()
+        return cred.app
 
     def setUp(self):
         """Create a SQLite database for quick testing."""
-        self.db_file_descriptor, self.dbfile = tempfile.mkstemp()
-        cred.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'
-        cred.app.config['SQLALCHEMY_DATABASE_URI'] += self.dbfile
-        cred.app.config['TESTING'] = True
+        self.client = cred.app.test_client()
         cred.initDB()
-        self.apikey = APIKeyModel(generate_apikey(), 'write')
-        cred.db.session.add(self.apikey)
-        cred.db.session.commit()
         self.session_key = None
-        return cred.app
 
     def tearDown(self):
         """Close the database file and unlink it."""
+        cred.db.session.remove()
         cred.db.drop_all()
-        os.close(self.db_file_descriptor)
-        os.unlink(self.dbfile)
 
     def authenticate_with_server(self, permission, alternate_device=None):
         """Authenticate with the server."""
