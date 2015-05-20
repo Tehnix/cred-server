@@ -3,7 +3,7 @@ import random
 import time
 import json
 from flask.ext.restful import Resource, reqparse
-from cred import db
+from cred.app import db
 from cred.exceptions import NotAuthenticated
 from cred.models.apikey import APIKey as APIKeyModel
 from cred.models.client import Client as ClientModel

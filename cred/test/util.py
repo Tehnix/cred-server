@@ -4,7 +4,7 @@ import json
 from functools import wraps
 from flask.ext.testing import TestCase
 from flask.ext.sqlalchemy import SQLAlchemy
-import cred
+from cred.app import app, db, initDB
 from cred.models.apikey import APIKey as APIKeyModel
 from cred.resources.apikeys import generate_apikey
 
@@ -41,18 +41,18 @@ class BaseTestCase(TestCase):
     TESTING = True
 
     def create_app(self):
-        self.client = cred.app.test_client()
-        return cred.app
+        self.client = app.test_client()
+        return app
 
     def setUp(self):
         """Create a SQLite database for quick testing."""
-        cred.initDB()
+        initDB()
         self.session_key = None
 
     def tearDown(self):
         """Close the database file and unlink it."""
-        cred.db.session.remove()
-        cred.db.drop_all()
+        db.session.remove()
+        db.drop_all()
 
     def authenticate_with_server(self, permission, alternate_device=None):
         """Authenticate with the server."""
@@ -60,8 +60,8 @@ class BaseTestCase(TestCase):
         if alternate_device is not None:
             device = alternate_device
         apikey = APIKeyModel(generate_apikey(), permission)
-        cred.db.session.add(apikey)
-        cred.db.session.commit()
+        db.session.add(apikey)
+        db.session.commit()
         req = json.dumps({
             'apiKey': apikey.apikey,
             'device': device,

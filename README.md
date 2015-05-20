@@ -28,6 +28,43 @@ Currently not complete, but you can
 and test out the API with curl :)
 
 
+
+Configuration
+=====
+
+Example configuration for a local setup with a SQLite3 database:
+
+```yaml
+SSL: False
+approot: '127.0.0.1'
+host: '*'
+port: 5000
+database:
+  type: 'sqlite3'
+  user: ''
+  password: ''
+  host: ''
+  port: ''
+  database: 'cred-server.db'
+```
+
+or using PostgreSQL,
+
+```yaml
+SSL: False
+approot: '127.0.0.1'
+host: '*'
+port: 5000
+database:
+  type: 'postgresql'
+  user: 'scott'
+  password: 'tiger'
+  host: 'localhost'
+  port: '5432'
+  database: 'mydatabase'
+```
+
+
 API
 =====
 The URL endpoints and their functionality are described below,
@@ -93,6 +130,14 @@ an example, a client with ID=145 is doing its first series of requests:
 
 And so on. The minimizes the state kept on the server. If step 2. produced no
 results, the client would set `after=0`, which would still give new events only.
+
+
+Database
+=====
+cred uses SQLAlchemy, so it supports the same database that SQLAlchemy does.
+The `type` setting in the configuration file takes any value that you can find
+at http://docs.sqlalchemy.org/en/latest/core/engines.html (like sqlite3,
+postgresql, postgresql+psycopg2, etc.).
 
 
 Development

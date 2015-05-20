@@ -1,7 +1,6 @@
 from functools import wraps
 from datetime import datetime
 from flask.ext.restful import Resource, reqparse, abort, marshal
-from cred import db
 from cred.exceptions import NotAuthenticated, InsufficientPermissions
 from cred.models.client import Client
 

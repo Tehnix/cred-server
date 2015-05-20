@@ -1,0 +1,18 @@
+#!/usr/bin/env python
+"""
+Run the cred-server
+
+"""
+import cred.config
+import cred.app
+
+
+# Locate and load the configuration file
+config_file = cred.config.locate_config_file()
+if config_file:
+    config = cred.config.load_config_file(config_file)
+else:
+    config = cred.config.default_config
+
+# Run the app
+cred.app.run(config)

@@ -2,7 +2,6 @@ from datetime import datetime
 from collections import OrderedDict
 from flask import request
 from flask.ext.restful import reqparse, fields, marshal
-from cred import db
 from cred.exceptions import ClientNotFound
 from cred.common import util
 from cred.models.client import Client as ClientModel

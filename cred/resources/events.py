@@ -2,7 +2,7 @@ from datetime import datetime
 from collections import OrderedDict
 from flask import request
 from flask.ext.restful import reqparse, fields, marshal
-from cred import db
+from cred.app import db
 from cred.exceptions import EventNotFound
 from cred.common import util
 from cred.models.event import Event as EventModel

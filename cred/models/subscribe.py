@@ -1,4 +1,4 @@
-from cred import db
+from cred.app import db
 
 
 class Subscribe(db.Model):

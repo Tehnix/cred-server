@@ -43,7 +43,7 @@ is,
 Where the GET requests also accept the parameters mentioned earlier.
 
 """
-from cred import api
+from cred.app import api
 from cred.resources.auth import Auth
 from cred.resources.apikeys import *
 from cred.resources.events import *

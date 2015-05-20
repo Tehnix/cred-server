@@ -1,5 +1,5 @@
 from datetime import datetime
-from cred import db
+from cred.app import db
 
 
 class Client(db.Model):
@@ -20,7 +20,7 @@ class Client(db.Model):
             self.last_active = active
 
     def __repr__(self):
-        return '<Device %r, Location %r, Last Pull %r, Last Active %r>' % (
+        return '<Device %r, Location %r, Last Active %r>' % (
             self.device,
             self.location,
             self.last_active

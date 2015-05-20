@@ -60,7 +60,6 @@ class ClientsEventsTestCase(testutil.BaseTestCase):
         # Check the server for new events
         response = self.client.get('/clients/%s/events' % self.client_id)
         resp = json.loads(response.data.decode('utf-8'))
-        print(resp)
         # Check that we get the correct response
         testutil.assertEqual(self, {
             response.status_code: 200,

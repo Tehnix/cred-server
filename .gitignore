@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 
+cred-server.db
+.credrc
+
 # C extensions
 *.so
 
