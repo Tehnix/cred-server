@@ -1,4 +1,4 @@
-""" Setup file for the cred package. """
+""" Setup file for the cred-server package. """
 from setuptools import setup
 import sys
 
@@ -9,16 +9,16 @@ if sys.version_info < (3,):
 
 
 setup(
-    name='cred',
-    version='0.1.3',
+    name='cred-server',
+    version='0.2.0',
     author='Tehnix',
-    author_email='christianlaustsen@gmail.com',
+    author_email='ckl@codetalk.io',
     packages=['cred', 'cred.test'],
     scripts=['bin/cred-server', 'bin/cred-client'],
-    url='http://pypi.python.org/pypi/cred/',
+    url='https://github.com/Tehnix/cred',
     license='BSD',
     description='Connected Reactive Electronic Devices.',
-    long_description=open('README.rst').read(),
+    long_description=open('README.md').read(),
     classifiers=[
         'Development Status :: 1 - Planning',
         'Environment :: Console',
