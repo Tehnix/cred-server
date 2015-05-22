@@ -44,6 +44,14 @@ see `cred-gen --help` for more information on how to use the program.
 
 Configuration
 =====
+If you don't supply the configuration location via `--config=/path/to/config`, then the configuration files are searched for in the following order:
+    1. Local directory
+    2. Users home directory
+    3. Users app directory
+    4. System app directory
+
+The file searched for is called .credrc for 1. and 2., and without the dot
+for 3. and 4.. If none are found, it will use the default configuration.
 
 Example configuration for a local setup with a SQLite3 database:
 
@@ -157,7 +165,13 @@ Development
 =====
 The following should get you running:
 
-1. Set up a virtual environment: `virtualenv env`
-2. Activate the virtual environment: `source env/bin/activate`
-3. Install the required packages: `pip install -r requirements.txt`
+1. `$ git clone git@github.com:Tehnix/cred.git && cd cred-server`
+2. `$ virtualenv env && source env/bin/activate`
+3. `pip install -r requirements.txt`
 4. Run tests with `nosetests` and alternatively with `--with-watch` (detects file changes)
+
+or a one-liner,
+
+```bash
+$ git clone git@github.com:Tehnix/cred.git && cd cred-server && virtualenv env && source env/bin/activate && pip install -r requirements.txt
+```

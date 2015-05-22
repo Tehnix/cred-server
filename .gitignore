@@ -5,6 +5,7 @@ __pycache__/
 cred-server.db
 cred-test.db
 .credrc
+credrc
 
 # C extensions
 *.so
