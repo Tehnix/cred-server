@@ -69,7 +69,7 @@ class BaseTestCase(flask.ext.testing.TestCase):
         cred.database.db.session.add(apikey)
         cred.database.db.session.commit()
         req = json.dumps({
-            'apiKey': apikey.apikey,
+            'apikey': apikey.apikey,
             'device': device,
             'location': LOCATION,
             'subscribe': SUBSCRIBE

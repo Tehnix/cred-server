@@ -70,10 +70,23 @@ class APIKeys(util.AuthenticatedResource):
         apikey = APIKeyModel(generate_apikey(), pargs['permission'])
         db.session.add(apikey)
         db.session.commit()
+        # FIXME: Find out why the URI in marshalling causes problems
+        # For now, manually create the URI
+        apikeyMarshal = marshal(apikey, {
+            'id': fields.Integer(attribute='apikey_id'),
+            'apikey': fields.String,
+            'permission': fields.String,
+            'created': fields.DateTime(dt_format='rfc822'),
+            'uri': fields.Url('apikeys', absolute=True)
+        })
+        apikeyMarshal['uri'] = '{0}/{1}'.format(
+            apikeyMarshal['uri'],
+            apikey.apikey_id
+        )
         return {
             'status': 201,
             'message': 'Created API Key',
-            'apikey': marshal(apikey, full_apikey_fields)
+            'apikey': apikeyMarshal
         }, 201
 
     def get(self):

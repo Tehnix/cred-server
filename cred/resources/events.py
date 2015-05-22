@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, url_for
 from flask.ext.restful import reqparse, fields, marshal
 from cred.database import db
 from cred.exceptions import EventNotFound
@@ -14,12 +14,12 @@ full_event_fields = {
     'action': fields.String,
     'value': fields.String,
     'time': fields.DateTime(dt_format='rfc822'),
-    'uri': fields.Url('events_item', absolute=True),
+    'uri': fields.Url('events_item', absolute=True)
 }
 
 simple_event_fields = {
     'id': fields.Integer(attribute='event_id'),
-    'uri': fields.Url('events_item', absolute=True),
+    'uri': fields.Url('events_item', absolute=True)
 }
 
 
@@ -80,10 +80,20 @@ class Events(util.AuthenticatedResource):
         db.session.commit()
         # Finally, convert the event object into our format by marshalling it,
         # and returning the JSON object
+        # FIXME: Find out why the URI in marshalling causes problems
+        # For now, manually create the URI
+        eventMarshal = marshal(event, {
+            'id': fields.Integer(attribute='event_id'),
+            'uri': fields.Url('events', absolute=True)
+        })
+        eventMarshal['uri'] = '{0}/{1}'.format(
+            eventMarshal['uri'],
+            event.event_id
+        )
         return {
             'status': 201,
             'message': 'Created Event',
-            'event': marshal(event, simple_event_fields)
+            'event': eventMarshal
         }, 201
 
     def get(self):

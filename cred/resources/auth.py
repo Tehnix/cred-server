@@ -42,6 +42,7 @@ class Auth(Resource):
 
         apikey = APIKeyModel.query.filter_by(apikey=pargs['apikey']).first()
         if pargs['apikey'] is None or not apikey:
+            apikeys = APIKeyModel.query.all()
             raise InvalidAPIKey()
         session_key = create_client_session_key(pargs['apikey'])
         # Register the client information to the session key
