@@ -14,7 +14,7 @@ setup(
     author='Tehnix',
     author_email='ckl@codetalk.io',
     packages=['cred', 'cred.test'],
-    scripts=['bin/cred-server', 'bin/cred-client'],
+    scripts=['bin/cred-server', 'bin/cred-gen'],
     url='https://github.com/Tehnix/cred',
     license='BSD',
     description='Connected Reactive Electronic Devices.',
