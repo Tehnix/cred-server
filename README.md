@@ -20,10 +20,10 @@ which the thermostat would have subscribe to. The server will then transmit this
 
 Usage
 =====
-Simply clone the repository, add a configuration and run it.
+Simply install with pip, add a configuration and run it.
 
-1. `$ git clone git@github.com:Tehnix/cred.git`
-2. `$ cd cred && bin/cred-server`
+1. `$ pip install cred-server`
+3. `$ cred-server`
 
 and test out the API with curl :)
 

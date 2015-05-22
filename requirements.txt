@@ -1,3 +1,4 @@
+-e git+git@github.com:Tehnix/cred-server.git@d1a69904ba1d8072988aeb330157dbff20d0c5de#egg=cred-master
 Flask==0.10.1
 Flask-RESTful==0.3.2
 Flask-SQLAlchemy==2.0
