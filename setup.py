@@ -7,15 +7,17 @@ if sys.version_info < (3,):
     print("I'm only for 3, please upgrade")
     sys.exit(1)
 
+version = '0.2.4'
 
 setup(
     name='cred-server',
-    version='0.2.3',
+    version=version,
     author='Tehnix',
     author_email='ckl@codetalk.io',
     packages=['cred', 'cred.test'],
     scripts=['bin/cred-server', 'bin/cred-gen'],
-    url='https://github.com/Tehnix/cred',
+    url='https://github.com/Tehnix/cred-server',
+    download_url='https://github.com/Tehnix/cred-server/tarball/v{0}'.format(version),
     license='BSD',
     description='Connected Reactive Electronic Devices.',
     long_description=open('README.md').read(),
@@ -31,7 +33,13 @@ setup(
         'Topic :: Home Automation',
     ],
     requires=[
-        'python (>=3.0)',
+        'Flask (>=0.10.1)',
+        'FlaskRESTful (>=0.3.2)',
+        'FlaskSQLAlchemy',
+        'FlaskTesting (>=0.4.2)',
+        'pyOpenSSL',
+        'PyYAML',
+        'appdirs',
     ],
     test_suite='nose.collector',
 )
