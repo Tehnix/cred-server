@@ -31,9 +31,7 @@ and test out the API with curl :)
 Generating API keys
 =====
 You can generate API keys with the command line utility `cred-gen`. Make sure
-it is using the same configuration as your server.
-
-There are three different permission levels,
+it is using the same configuration as your server. There are three different permission levels,
 
 | Permission | Access                               |
 |------------|--------------------------------------|
