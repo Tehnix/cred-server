@@ -60,3 +60,6 @@ def load_config_file(filename):
     except yaml.constructor.ConstructorError as e:
         print('Invalid configuration file! At {0}'.format(filename))
         sys.exit(1)
+    except FileNotFoundError as e:
+        print('Found no file at {0}'.format(filename))
+        sys.exit(1)

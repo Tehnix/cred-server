@@ -35,7 +35,7 @@ app = flask.Flask(__name__)
 api = CustomApi(app)
 
 
-def run(config):
+def run(config, debug):
     cdb = config['database']
     if cdb['type'] == 'sqlite3':
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{0}'.format(cdb['database'])
@@ -57,19 +57,4 @@ def run(config):
     host = config['host']
     if host == '*':
         host = '0.0.0.0'
-    app.run(host=host, port=config['port'])
-
-
-def run_test():
-    # Use a standard db placed in the current folder
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cred-test.db'
-    # Create our database
-    cred.database.db = flask.ext.sqlalchemy.SQLAlchemy(app)
-    cred.database.init_db(cred.database.db)
-    # Tie the API endpoints to the correct resources
-    create_api_resources(api)
-    # Run the Flask app on 127.0.0.1:5000 with debug enabled
-    app.run(debug=True)
-
-if __name__ == '__main__':
-    run_test()
+    app.run(host=host, port=config['port'], debug=debug)

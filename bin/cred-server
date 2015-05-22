@@ -5,14 +5,34 @@ Run the cred-server
 """
 import cred.config
 import cred.app
+import argparse
 
 
-# Locate and load the configuration file
-config_file = cred.config.locate_config_file()
-if config_file:
-    config = cred.config.load_config_file(config_file)
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    '--config',
+    type=str,
+    default=None,
+    help='destination of configuration file'
+)
+parser.add_argument(
+    '--debug',
+    default=False,
+    action='store_true',
+    help='run in debug mode'
+)
+
+args = parser.parse_args()
+
+if args.config is not None:
+    config = cred.config.load_config_file(args.config)
 else:
-    config = cred.config.default_config
+    # Locate and load the configuration file
+    config_file = cred.config.locate_config_file()
+    if config_file:
+        config = cred.config.load_config_file(config_file)
+    else:
+        config = cred.config.default_config
 
 # Run the app
-cred.app.run(config)
+cred.app.run(config, args.debug)

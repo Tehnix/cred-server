@@ -1,1 +1,108 @@
 #!/usr/bin/env python
+"""
+Generate API keys. Valid permissions are:
+    admin - access to everything
+    write - access to all POSTs and GETs, except API keys
+    read  - access to all GETs, except API keys
+
+"""
+import argparse
+import flask.ext.sqlalchemy
+import cred.config
+import cred.app
+import cred.database
+
+
+parser = argparse.ArgumentParser(
+    description="""
+Generate API keys. Valid permissions are: admin (access to everything), write
+(access to all POSTs and GETs, except API keys), read (access to all GETs,
+except API keys)
+"""
+)
+parser.add_argument(
+    '--config',
+    type=str,
+    default=None,
+    help='destination of configuration file'
+)
+parser.add_argument(
+    '--list',
+    default=False,
+    action='store_true',
+    help='list all api keys'
+)
+parser.add_argument(
+    '--admin',
+    default=False,
+    action='store_const',
+    const='admin',
+    help='set admin permissions'
+)
+parser.add_argument(
+    '--write',
+    default=False,
+    action='store_const',
+    const='write',
+    help='set write permissions'
+)
+parser.add_argument(
+    '--read',
+    default=False,
+    action='store_const',
+    const='read',
+    help='set read permissions'
+)
+
+args = parser.parse_args()
+
+# Locate and load the configuration file
+if args.config is not None:
+    config = cred.config.load_config_file(args.config)
+else:
+    config_file = cred.config.locate_config_file()
+    if config_file:
+        config = cred.config.load_config_file(config_file)
+    else:
+        config = cred.config.default_config
+
+
+# Set up the app and database configuration
+cdb = config['database']
+if cdb['type'] == 'sqlite3':
+    cred.app.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{0}'.format(cdb['database'])
+else:
+    cred.app.app.config['SQLALCHEMY_DATABASE_URI'] = '{0}//{1}:{2}@{3}:{4}/{5}'.format(
+        cdb['type'],
+        cdb['user'],
+        cdb['password'],
+        cdb['host'],
+        cdb['port'],
+        cdb['database']
+    )
+# Create our database
+cred.database.db = flask.ext.sqlalchemy.SQLAlchemy(cred.app.app)
+cred.database.init_db(cred.database.db)
+from cred.models.apikey import APIKey as APIKeyModel
+from cred.resources.apikeys import generate_apikey
+
+if args.list:
+    apikeys = APIKeyModel.query.all()
+    print('Listing API keys:')
+    for apikey in apikeys:
+        print('    {1} ({0})'.format(
+            apikey.permission,
+            apikey.apikey
+        ))
+elif args.admin or args.write or args.read:
+    # Generate the API key
+    permission = args.admin or args.write or args.read
+    apikey = APIKeyModel(generate_apikey(), permission)
+    cred.database.db.session.add(apikey)
+    cred.database.db.session.commit()
+    print('Generated API key with {0} permission: {1}'.format(
+        permission,
+        apikey.apikey
+    ))
+else:
+    print('Please choose a permission level.')

@@ -34,16 +34,16 @@ class Auth(Resource):
     def post(self):
         """Authenticate the client, and schedule it if implemented."""
         parser = reqparse.RequestParser()
-        parser.add_argument('apiKey', type=str)
+        parser.add_argument('apikey', type=str)
         parser.add_argument('device', type=str)
         parser.add_argument('location', type=str)
         parser.add_argument('subscribe', type=dict)
         pargs = parser.parse_args()
 
-        apikey = APIKeyModel.query.filter_by(apikey=pargs['apiKey']).first()
-        if pargs['apiKey'] is None or not apikey:
+        apikey = APIKeyModel.query.filter_by(apikey=pargs['apikey']).first()
+        if pargs['apikey'] is None or not apikey:
             raise InvalidAPIKey()
-        session_key = create_client_session_key(pargs['apiKey'])
+        session_key = create_client_session_key(pargs['apikey'])
         # Register the client information to the session key
         client = ClientModel(
             pargs['device'],
