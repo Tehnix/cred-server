@@ -151,7 +151,7 @@ Database
 =====
 cred uses SQLAlchemy, so it supports the same database that SQLAlchemy does.
 The `type` setting in the configuration file takes any value that you can find
-at http://docs.sqlalchemy.org/en/latest/core/engines.html (like sqlite3,
+at [SQLAlchemy engines](http://docs.sqlalchemy.org/en/latest/core/engines.html "SQLAlchemy engines") (like sqlite3,
 postgresql, postgresql+psycopg2, etc.).
 
 
