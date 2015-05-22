@@ -173,5 +173,5 @@ The following should get you running:
 or a one-liner,
 
 ```bash
-$ git clone git@github.com:Tehnix/cred.git && cd cred-server && virtualenv env && source env/bin/activate && pip install -r requirements.txt
+$ git clone git@github.com:Tehnix/cred-server.git && cd cred-server && virtualenv env && source env/bin/activate && pip install -r requirements.txt
 ```
