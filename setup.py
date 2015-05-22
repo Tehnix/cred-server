@@ -7,14 +7,20 @@ if sys.version_info < (3,):
     print("I'm only for 3, please upgrade")
     sys.exit(1)
 
-version = '0.2.9'
+version = '0.2.10'
 
 setup(
     name='cred-server',
     version=version,
     author='Tehnix',
     author_email='ckl@codetalk.io',
-    packages=['cred', 'cred.test'],
+    packages=[
+        'cred',
+        'cred.models',
+        'cred.resources',
+        'cred.common',
+        'cred.test'
+    ],
     scripts=['bin/cred-server', 'bin/cred-gen'],
     url='https://github.com/Tehnix/cred-server',
     download_url='https://github.com/Tehnix/cred-server/tarball/v{0}'.format(version),
