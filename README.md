@@ -20,13 +20,28 @@ which the thermostat would have subscribe to. The server will then transmit this
 
 Usage
 =====
-Currently not complete, but you can
+Simply clone the repository, add a configuration and run it.
 
 1. `$ git clone git@github.com:Tehnix/cred.git`
-2. `$ cd cred && python cred/runserver.py`
+2. `$ cd cred && bin/cred-server`
 
 and test out the API with curl :)
 
+
+Generating API keys
+=====
+You can generate API keys with the command line utility `cred-gen`. Make sure
+it is using the same configuration as your server.
+
+There are three different permission levels,
+
+| Permission | Access                               |
+|------------|--------------------------------------|
+| admin      | All resources                        |
+| write      | All POST and GET except for API keys |
+| read       | All GET except for API keys          |
+
+see `cred-gen --help` for more information on how to use the program.
 
 
 Configuration
