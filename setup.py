@@ -7,7 +7,7 @@ if sys.version_info < (3,):
     print("I'm only for 3, please upgrade")
     sys.exit(1)
 
-version = '0.2.7'
+version = '0.2.8'
 
 setup(
     name='cred-server',
@@ -34,9 +34,9 @@ setup(
     ],
     install_requires=[
         'Flask>=0.10.1',
-        'FlaskRESTful>=0.3.2',
-        'FlaskSQLAlchemy',
-        'FlaskTesting>=0.4.2',
+        'Flask-RESTful>=0.3.2',
+        'Flask-SQLAlchemy',
+        'Flask-Testing>=0.4.2',
         'pyOpenSSL',
         'PyYAML',
         'appdirs',
