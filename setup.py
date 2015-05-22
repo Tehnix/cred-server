@@ -7,7 +7,7 @@ if sys.version_info < (3,):
     print("I'm only for 3, please upgrade")
     sys.exit(1)
 
-version = '0.2.6'
+version = '0.2.7'
 
 setup(
     name='cred-server',
@@ -32,11 +32,11 @@ setup(
         'Programming Language :: Python :: 3 :: Only',
         'Topic :: Home Automation',
     ],
-    requires=[
-        'Flask (>=0.10.1)',
-        'FlaskRESTful (>=0.3.2)',
+    install_requires=[
+        'Flask>=0.10.1',
+        'FlaskRESTful>=0.3.2',
         'FlaskSQLAlchemy',
-        'FlaskTesting (>=0.4.2)',
+        'FlaskTesting>=0.4.2',
         'pyOpenSSL',
         'PyYAML',
         'appdirs',
