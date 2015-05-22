@@ -45,7 +45,6 @@ class BaseTestCase(flask.ext.testing.TestCase):
     TESTING = True
 
     def create_app(self):
-        self.client = app.test_client()
         return app
 
     def setUp(self):
