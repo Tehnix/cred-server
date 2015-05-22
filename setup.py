@@ -7,7 +7,7 @@ if sys.version_info < (3,):
     print("I'm only for 3, please upgrade")
     sys.exit(1)
 
-version = '0.2.5'
+version = '0.2.6'
 
 setup(
     name='cred-server',
@@ -20,7 +20,7 @@ setup(
     download_url='https://github.com/Tehnix/cred-server/tarball/v{0}'.format(version),
     license='BSD',
     description='Connected Reactive Electronic Devices.',
-    long_description=open('README.md').read(),
+    # long_description=open('README.md').read(),
     classifiers=[
         'Development Status :: 1 - Planning',
         'Environment :: Console',
