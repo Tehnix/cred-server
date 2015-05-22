@@ -10,7 +10,7 @@ if sys.version_info < (3,):
 
 setup(
     name='cred-server',
-    version='0.2.0',
+    version='0.2.1',
     author='Tehnix',
     author_email='ckl@codetalk.io',
     packages=['cred', 'cred.test'],
