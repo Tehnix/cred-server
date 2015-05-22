@@ -4,13 +4,14 @@ the flask server.
 
 """
 import os
-from flask import Flask
-from flask.ext.restful import Api
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.json import JSONEncoder
+import flask
+import flask.ext.restful
+import flask.ext.sqlalchemy
+import cred.database
+from cred.routes import create_api_resources
 
 
-class CustomApi(Api):
+class CustomApi(flask.ext.restful.Api):
     """Extend the base Api class with a custom error handler."""
 
     def handle_error(self, e):
@@ -29,26 +30,9 @@ class CustomApi(Api):
 
 
 # Create our Application
-app = Flask('cred-server')
-
+app = flask.Flask(__name__)
 # Tie the Application to our API
 api = CustomApi(app)
-
-# Database
-db = SQLAlchemy(app)
-
-
-# Import all the models, so that when we create the db, we
-# create it with the actual tables we need
-from cred.models import *
-
-
-def initDB():
-    """Create the database tables."""
-    db.create_all()
-
-# Import the routes here, to avoid circular imports
-import cred.routes
 
 
 def run(config):
@@ -64,7 +48,12 @@ def run(config):
             cdb['port'],
             cdb['database']
         )
-    initDB()
+    # Create our database
+    cred.database.db = flask.ext.sqlalchemy.SQLAlchemy(app)
+    cred.database.init_db(cred.database.db)
+    # Tie the API endpoints to the correct resources
+    create_api_resources(api)
+    # Set up the server to listen on the configurated host and port
     host = config['host']
     if host == '*':
         host = '0.0.0.0'
@@ -72,8 +61,14 @@ def run(config):
 
 
 def run_test():
+    # Use a standard db placed in the current folder
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cred-test.db'
-    initDB()
+    # Create our database
+    cred.database.db = flask.ext.sqlalchemy.SQLAlchemy(app)
+    cred.database.init_db(cred.database.db)
+    # Tie the API endpoints to the correct resources
+    create_api_resources(api)
+    # Run the Flask app on 127.0.0.1:5000 with debug enabled
     app.run(debug=True)
 
 if __name__ == '__main__':

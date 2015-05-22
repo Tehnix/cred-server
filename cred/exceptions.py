@@ -9,6 +9,11 @@ class NotAuthenticated(Exception):
     message = 'Not Authenticated'
 
 
+class InvalidAPIKey(Exception):
+    status = 401
+    message = 'Invalid API Key'
+    
+
 class InsufficientPermissions(Exception):
     status = 403
     message = "Insufficient Permissions"

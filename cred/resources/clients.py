@@ -1,5 +1,3 @@
-from datetime import datetime
-from collections import OrderedDict
 from flask import request
 from flask.ext.restful import reqparse, fields, marshal
 from cred.exceptions import ClientNotFound

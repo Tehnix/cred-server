@@ -55,7 +55,8 @@ def load_config_file(filename):
         config = None
         with open(filename, 'r') as f:
             config = yaml.load(f)
+            print('Using configuration at {0}'.format(filename))
         return config
     except yaml.constructor.ConstructorError as e:
-        print('Invalid configuration file! At {:0}'.format(filename))
+        print('Invalid configuration file! At {0}'.format(filename))
         sys.exit(1)

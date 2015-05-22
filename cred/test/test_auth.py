@@ -42,7 +42,7 @@ class AuthTestCase(testutil.BaseTestCase):
         testutil.assertEqual(self, {
             response.status_code: 401,
             resp['status']: 401,
-            resp['message']: 'Not Authenticated'
+            resp['message']: 'Invalid API Key'
         })
 
 

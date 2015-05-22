@@ -1,5 +1,5 @@
 from datetime import datetime
-from cred.app import db
+from cred.database import db
 
 
 class Event(db.Model):

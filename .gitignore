@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 
 cred-server.db
+cred-test.db
 .credrc
 
 # C extensions

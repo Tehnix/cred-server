@@ -3,8 +3,8 @@ import random
 import time
 import json
 from flask.ext.restful import Resource, reqparse
-from cred.app import db
-from cred.exceptions import NotAuthenticated
+from cred.database import db
+from cred.exceptions import InvalidAPIKey
 from cred.models.apikey import APIKey as APIKeyModel
 from cred.models.client import Client as ClientModel
 from cred.models.subscribe import Subscribe as SubscribeModel
@@ -42,7 +42,7 @@ class Auth(Resource):
 
         apikey = APIKeyModel.query.filter_by(apikey=pargs['apiKey']).first()
         if pargs['apiKey'] is None or not apikey:
-            raise NotAuthenticated()
+            raise InvalidAPIKey()
         session_key = create_client_session_key(pargs['apiKey'])
         # Register the client information to the session key
         client = ClientModel(

@@ -2,11 +2,11 @@ import os
 import tempfile
 import json
 from functools import wraps
-from flask.ext.testing import TestCase
-from flask.ext.sqlalchemy import SQLAlchemy
-from cred.app import app, db, initDB
-from cred.models.apikey import APIKey as APIKeyModel
-from cred.resources.apikeys import generate_apikey
+import flask.ext.testing
+import flask.ext.sqlalchemy
+import cred.database
+from cred.app import app, api
+from cred.routes import create_api_resources
 
 
 # Constants used throughout the test suites
@@ -17,6 +17,10 @@ SUBSCRIBE = {
     'Light': {'location': 'Living Room'},
     'Alarm': {}
 }
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+cred.database.db = flask.ext.sqlalchemy.SQLAlchemy(app)
+create_api_resources(api)
 
 
 def assertEqual(test_object, assertables):
@@ -36,7 +40,7 @@ def authenticate(permission, alt_dev=None):
     return authenticate_decorator
 
 
-class BaseTestCase(TestCase):
+class BaseTestCase(flask.ext.testing.TestCase):
     SQLALCHEMY_DATABASE_URI = "sqlite://"
     TESTING = True
 
@@ -46,22 +50,24 @@ class BaseTestCase(TestCase):
 
     def setUp(self):
         """Create a SQLite database for quick testing."""
-        initDB()
+        cred.database.init_db(cred.database.db)
         self.session_key = None
 
     def tearDown(self):
         """Close the database file and unlink it."""
-        db.session.remove()
-        db.drop_all()
+        cred.database.db.session.remove()
+        cred.database.db.drop_all()
 
     def authenticate_with_server(self, permission, alternate_device=None):
         """Authenticate with the server."""
+        from cred.models.apikey import APIKey as APIKeyModel
+        from cred.resources.apikeys import generate_apikey
         device = DEVICE
         if alternate_device is not None:
             device = alternate_device
         apikey = APIKeyModel(generate_apikey(), permission)
-        db.session.add(apikey)
-        db.session.commit()
+        cred.database.db.session.add(apikey)
+        cred.database.db.session.commit()
         req = json.dumps({
             'apiKey': apikey.apikey,
             'device': device,

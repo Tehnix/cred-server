@@ -1,5 +1,5 @@
 from datetime import datetime
-from cred.app import db
+from cred.database import db
 
 
 class APIKey(db.Model):
@@ -10,7 +10,7 @@ class APIKey(db.Model):
     created = db.Column(db.DateTime, default=datetime.utcnow)
     client = db.relationship(
         'Client',
-        backref=db.backref("apikey", uselist=False)
+        backref=db.backref('apikey', uselist=False)
     )
 
     def __init__(self, apikey, permission='read'):

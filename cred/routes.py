@@ -43,70 +43,71 @@ is,
 Where the GET requests also accept the parameters mentioned earlier.
 
 """
-from cred.app import api
-from cred.resources.auth import Auth
-from cred.resources.apikeys import *
-from cred.resources.events import *
-from cred.resources.clients import *
-from cred.resources.clients_events import *
 
 
-# Generate API keys and read (requires admin permissions)
-api.add_resource(
-    APIKeys,
-    '/apikeys',
-    endpoint='apikeys'
-)
-api.add_resource(
-    APIKeysItem,
-    '/apikeys/<int:apikey_id>',
-    endpoint='apikeys_item'
-)
+def create_api_resources(api):
+    """Add resources to the API object."""
+    from cred.resources.auth import Auth
+    from cred.resources.apikeys import APIKeys, APIKeysItem
+    from cred.resources.events import Events, EventsItem
+    from cred.resources.clients import Clients, ClientsMe, ClientsItem
+    from cred.resources.clients_events import ClientsEvents, ClientsSubscribedEvents
+    # Generate API keys and read (requires admin permissions)
+    api.add_resource(
+        APIKeys,
+        '/apikeys',
+        endpoint='apikeys'
+    )
+    api.add_resource(
+        APIKeysItem,
+        '/apikeys/<int:apikey_id>',
+        endpoint='apikeys_item'
+    )
 
-# Authentication of clients
-api.add_resource(
-    Auth,
-    '/auth',
-    endpoint='auth'
-)
+    # Authentication of clients
+    api.add_resource(
+        Auth,
+        '/auth',
+        endpoint='auth'
+    )
 
-# Access to all events
-api.add_resource(
-    Events,
-    '/events',
-    endpoint='events'
-)
-api.add_resource(
-    EventsItem,
-    '/events/<int:event_id>',
-    endpoint='events_item'
-)
+    # Access to all events
+    api.add_resource(
+        Events,
+        '/events',
+        endpoint='events'
+    )
+    api.add_resource(
+        EventsItem,
+        '/events/<int:event_id>',
+        endpoint='events_item'
+    )
 
-# Client related information
-api.add_resource(
-    Clients,
-    '/clients',
-    endpoint='clients'
-)
-api.add_resource(
-    ClientsMe,
-    '/clients/me',
-    endpoint='clients_me'
-)
-api.add_resource(
-    ClientsItem,
-    '/clients/<int:client_id>',
-    endpoint='clients_item'
-)
+    # Client related information
+    api.add_resource(
+        Clients,
+        '/clients',
+        endpoint='clients'
+    )
+    api.add_resource(
+        ClientsMe,
+        '/clients/me',
+        endpoint='clients_me'
+    )
+    api.add_resource(
+        ClientsItem,
+        '/clients/<int:client_id>',
+        endpoint='clients_item'
+    )
 
-# Events pertaining to a specific client
-api.add_resource(
-    ClientsEvents,
-    '/clients/<int:client_id>/events',
-    endpoint='clients_events'
-)
-api.add_resource(
-    ClientsSubscribedEvents,
-    '/clients/<int:client_id>/subscribedevents',
-    endpoint='clients_subscribedevents'
-)
+    # Events pertaining to a specific client
+    api.add_resource(
+        ClientsEvents,
+        '/clients/<int:client_id>/events',
+        endpoint='clients_events'
+    )
+    api.add_resource(
+        ClientsSubscribedEvents,
+        '/clients/<int:client_id>/subscribedevents',
+        endpoint='clients_subscribedevents'
+    )
