@@ -1,6 +1,7 @@
 from functools import wraps
 from datetime import datetime
 from flask.ext.restful import Resource, reqparse, abort, marshal
+from cred.database import db
 from cred.exceptions import NotAuthenticated, InsufficientPermissions
 from cred.models.client import Client
 
@@ -9,7 +10,7 @@ parser = reqparse.RequestParser()
 parser.add_argument(
     'sessionKey',
     type=str,
-    location='cookies'
+    location=['cookies', 'json']
 )
 
 
@@ -20,19 +21,20 @@ def get_db_items(request, Model=None, default_fields=None, full_fields=None, bas
         query = base_query
     else:
         query = Model.query
+    query = query.order_by(db.desc(Model.id))
     # Add filters to the query, based on the request
     if request.args.get('before', False):
         query = query.filter(
-            Model.id < before
+            Model.id < request.args.get('before', 0)
         )
     if request.args.get('after', False):
         query = query.filter(
-            Model.id > after
+            Model.id > request.args.get('after', 0)
         )
     if request.args.get('limit', False):
-        query = query.limit(limit)
+        query = query.limit(request.args.get('limit', 0))
     if request.args.get('offset', False):
-        query = query.offset(offset)
+        query = query.offset(request.args.get('offset', 0))
     # Retrive the rows from the database
     query = query.all()
     # Finally, marshal it before returning the result
@@ -53,22 +55,6 @@ def add_nested_arguments(top_pargs, location, args):
         )
     return parser.parse_args(req=top_pargs)
 
-
-# FIXME: Make the decorator work.
-# def require_permission(permission):
-#     """Decorator for specifying access permissions."""
-#     def permission_decorator(fun):
-#         @wraps(fun)
-#         def wrapped(self, *args, **kwargs):
-#             if permission == 'admin':
-#                 self.require_admin_permission()
-#             elif permission == 'write':
-#                 self.require_write_permission()
-#             elif permission == 'read':
-#                 self.require_read_permission()
-#             fun(self, *args, **kwargs)
-#         return wrapped
-#     return permission_decorator
 
 
 class AuthenticatedResource(Resource):

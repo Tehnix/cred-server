@@ -3,10 +3,10 @@ from cred.database import db
 
 class Subscribe(db.Model):
     __tablename__ = 'subscribe'
-    subscribe_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     event = db.Column(db.String(240))
     location = db.Column(db.String(240))
-    client_id = db.Column(db.Integer, db.ForeignKey('client.client_id'))
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
     client = db.relationship(
         'Client',
         backref=db.backref('subscribes', lazy='dynamic'))

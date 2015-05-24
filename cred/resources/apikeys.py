@@ -10,7 +10,7 @@ from cred.models.apikey import APIKey as APIKeyModel
 
 
 full_apikey_fields = {
-    'id': fields.Integer(attribute='apikey_id'),
+    'id': fields.Integer,
     'apikey': fields.String,
     'permission': fields.String,
     'created': fields.DateTime(dt_format='rfc822'),
@@ -18,7 +18,7 @@ full_apikey_fields = {
 }
 
 simple_apikey_fields = {
-    'id': fields.Integer(attribute='apikey_id'),
+    'id': fields.Integer,
     'uri': fields.Url('apikeys_item', absolute=True),
 }
 
@@ -73,7 +73,7 @@ class APIKeys(util.AuthenticatedResource):
         # FIXME: Find out why the URI in marshalling causes problems
         # For now, manually create the URI
         apikeyMarshal = marshal(apikey, {
-            'id': fields.Integer(attribute='apikey_id'),
+            'id': fields.Integer,
             'apikey': fields.String,
             'permission': fields.String,
             'created': fields.DateTime(dt_format='rfc822'),
@@ -81,7 +81,7 @@ class APIKeys(util.AuthenticatedResource):
         })
         apikeyMarshal['uri'] = '{0}/{1}'.format(
             apikeyMarshal['uri'],
-            apikey.apikey_id
+            apikey.id
         )
         return {
             'status': 201,
@@ -119,10 +119,10 @@ class APIKeys(util.AuthenticatedResource):
 class APIKeysItem(util.AuthenticatedResource):
     """Methods going to the /apikeys/<int:id> route."""
 
-    def get(self, apikey_id):
+    def get(self, id):
         """Fetch information about a specific API key."""
         self.require_admin_permission()
-        apikey = APIKeyModel.query.filter_by(apikey_id=apikey_id).first()
+        apikey = APIKeyModel.query.filter_by(id=id).first()
         if not apikey:
             raise APIKeyNotFound()
         return {

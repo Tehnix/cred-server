@@ -4,13 +4,13 @@ from cred.database import db
 
 class Event(db.Model):
     __tablename__ = 'event'
-    event_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(240))
     location = db.Column(db.String(240))
     action = db.Column(db.String(240))
     value = db.Column(db.String(240))
     time = db.Column(db.DateTime, default=datetime.utcnow)
-    client_id = db.Column(db.Integer, db.ForeignKey('client.client_id'))
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
     client = db.relationship(
         'Client',
         backref=db.backref('events', lazy='dynamic'))

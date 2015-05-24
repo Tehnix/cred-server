@@ -7,6 +7,8 @@ import os
 import flask
 import flask.ext.restful
 import flask.ext.sqlalchemy
+import flask.ext.cors
+import cred.config
 import cred.database
 from cred.routes import create_api_resources
 
@@ -33,9 +35,12 @@ class CustomApi(flask.ext.restful.Api):
 app = flask.Flask(__name__)
 # Tie the Application to our API
 api = CustomApi(app)
+# Allow CORS
+cors = flask.ext.cors.CORS(app, resources={r"/*": {"origins": "*", "supports_credentials": True}})
 
 
 def run(config, debug):
+    cred.config.loaded_configuration = config
     cdb = config['database']
     if cdb['type'] == 'sqlite3':
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{0}'.format(cdb['database'])
@@ -58,3 +63,8 @@ def run(config, debug):
     if host == '*':
         host = '0.0.0.0'
     app.run(host=host, port=config['port'], debug=debug)
+
+
+if __name__ == '__main__':
+    import cred.config
+    run(cred.config.default_config, True)

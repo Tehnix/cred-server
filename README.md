@@ -22,7 +22,7 @@ Usage
 =====
 Simply install with pip, add a configuration and run it.
 
-1. `$ pip install cred-server`
+1. `$ pip install cred-server`$
 3. `$ cred-server`
 
 and test out the API with curl :)
@@ -60,6 +60,8 @@ SSL: False
 approot: '127.0.0.1'
 host: '*'
 port: 5000
+scheduler: False
+pingtimeout: 240
 database:
   type: 'sqlite3'
   user: ''
@@ -76,6 +78,8 @@ SSL: False
 approot: '127.0.0.1'
 host: '*'
 port: 5000
+scheduler: False
+pingtimeout: 240
 database:
   type: 'postgresql'
   user: 'scott'

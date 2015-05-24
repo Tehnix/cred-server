@@ -3,6 +3,7 @@ import random
 import time
 import json
 from flask.ext.restful import Resource, reqparse
+import cred.config
 from cred.database import db
 from cred.exceptions import InvalidAPIKey
 from cred.models.apikey import APIKey as APIKeyModel
@@ -54,22 +55,30 @@ class Auth(Resource):
         )
         db.session.add(client)
         # Subscribe the client to the requested events
-        subscribe_to_events(client, pargs['subscribe'])
+        if pargs['subscribe']:
+            subscribe_to_events(client, pargs['subscribe'])
         db.session.commit()
 
         subscribes = {}
         for item in client.subscribes.all():
             subscribes[item.event] = {'location': item.location}
-
+        if cred.config.loaded_configuration['scheduler']:
+            # Very simple scheduler, that assigns a random timeslot
+            scheduled = {
+                'assigned': True,
+                'slot': random.randrange(1,31)
+            }
+        else:
+            scheduled = {
+                'assigned': False,
+                'slot': None
+            }
         # FIXME: Set cookie in a proper way!
         return {
             'status': 201,
             'message': 'Authenticated',
-            'id': client.client_id,
+            'id': client.id,
             'sessionKey': session_key,
-            'scheduled': {
-                'assigned': False,
-                'slot': None
-            },
-            'PINGTimeout': 240
+            'scheduled': scheduled,
+            'PINGTimeout': cred.config.loaded_configuration['pingtimeout']
         }, 201, {'Set-Cookie': 'sessionKey=' + session_key}

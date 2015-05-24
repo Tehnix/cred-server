@@ -4,6 +4,7 @@ import json
 from functools import wraps
 import flask.ext.testing
 import flask.ext.sqlalchemy
+import cred.config
 import cred.database
 from cred.app import app, api
 from cred.routes import create_api_resources
@@ -21,6 +22,7 @@ SUBSCRIBE = {
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
 cred.database.db = flask.ext.sqlalchemy.SQLAlchemy(app)
 create_api_resources(api)
+cred.config.loaded_configuration = cred.config.default_config
 
 
 def assertEqual(test_object, assertables):
@@ -80,5 +82,5 @@ class BaseTestCase(flask.ext.testing.TestCase):
         )
         resp = json.loads(response.data.decode('utf-8'))
         self.session_key = resp['sessionKey']
-        self.client_id = resp['id']
+        self.id = resp['id']
         return response

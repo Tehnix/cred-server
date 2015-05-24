@@ -4,12 +4,12 @@ from cred.database import db
 
 class Client(db.Model):
     __tablename__ = 'client'
-    client_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     device = db.Column(db.String(240))
     location = db.Column(db.String(240))
     session = db.Column(db.String(240))
     last_active = db.Column(db.DateTime, default=datetime.utcnow)
-    apikey_id = db.Column(db.Integer, db.ForeignKey('apikey.apikey_id'))
+    apikey_id = db.Column(db.Integer, db.ForeignKey('apikey.id'))
 
     def __init__(self, device, location, session, apikey, active=None):
         self.device = device

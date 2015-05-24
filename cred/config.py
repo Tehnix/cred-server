@@ -15,6 +15,9 @@ import appdirs
 import yaml
 
 
+loaded_configuration = None
+
+
 config_file = 'credrc'
 dot_config_file = '.' + config_file
 appname = 'cred-server'
@@ -32,7 +35,9 @@ default_config = {
         'host': '',
         'port': '',
         'database': 'cred-server.db'
-    }
+    },
+    'scheduler': False,
+    'pingtimeout': 240
 }
 
 
@@ -56,9 +61,12 @@ def load_config_file(filename):
         with open(filename, 'r') as f:
             config = yaml.load(f)
             print('Using configuration at {0}'.format(filename))
+        if not config.keys() == default_config.keys():
+            print('Invalid configuration file! (either missing or too many fields!)')
+            sys.exit(1)
         return config
     except yaml.constructor.ConstructorError as e:
-        print('Invalid configuration file! At {0}'.format(filename))
+        print('Failed to parse configuration file! At {0}'.format(filename))
         sys.exit(1)
     except FileNotFoundError as e:
         print('Found no file at {0}'.format(filename))

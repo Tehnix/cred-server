@@ -106,9 +106,9 @@ class APIKeyTestCase(testutil.BaseTestCase):
             response.status_code: 200,
             resp['status']: 200,
             resp['message']: 'OK',
-            a1['apikey']['id']: resp['apikeys'][1]['id'],
-            a2['apikey']['id']: resp['apikeys'][2]['id'],
-            a3['apikey']['id']: resp['apikeys'][3]['id'],
+            a3['apikey']['id']: resp['apikeys'][0]['id'],
+            a2['apikey']['id']: resp['apikeys'][1]['id'],
+            a1['apikey']['id']: resp['apikeys'][2]['id'],
         })
 
     @testutil.authenticate('read')

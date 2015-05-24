@@ -60,7 +60,7 @@ def create_api_resources(api):
     )
     api.add_resource(
         APIKeysItem,
-        '/apikeys/<int:apikey_id>',
+        '/apikeys/<int:id>',
         endpoint='apikeys_item'
     )
 
@@ -79,7 +79,7 @@ def create_api_resources(api):
     )
     api.add_resource(
         EventsItem,
-        '/events/<int:event_id>',
+        '/events/<int:id>',
         endpoint='events_item'
     )
 
@@ -96,18 +96,18 @@ def create_api_resources(api):
     )
     api.add_resource(
         ClientsItem,
-        '/clients/<int:client_id>',
+        '/clients/<int:id>',
         endpoint='clients_item'
     )
 
     # Events pertaining to a specific client
     api.add_resource(
         ClientsEvents,
-        '/clients/<int:client_id>/events',
+        '/clients/<int:id>/events',
         endpoint='clients_events'
     )
     api.add_resource(
         ClientsSubscribedEvents,
-        '/clients/<int:client_id>/subscribedevents',
+        '/clients/<int:id>/subscribedevents',
         endpoint='clients_subscribedevents'
     )

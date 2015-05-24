@@ -58,16 +58,16 @@ class ClientsEventsTestCase(testutil.BaseTestCase):
         )
         d4 = json.loads(r.data.decode('utf-8'))
         # Check the server for new events
-        response = self.client.get('/clients/%s/events' % self.client_id)
+        response = self.client.get('/clients/%s/events' % self.id)
         resp = json.loads(response.data.decode('utf-8'))
         # Check that we get the correct response
         testutil.assertEqual(self, {
             response.status_code: 200,
             resp['status']: 200,
             resp['message']: 'OK',
-            d2['event']['id']: resp['events'][0]['id'],
+            d4['event']['id']: resp['events'][0]['id'],
             d3['event']['id']: resp['events'][1]['id'],
-            d4['event']['id']: resp['events'][2]['id'],
+            d2['event']['id']: resp['events'][2]['id'],
         })
 
     @testutil.authenticate('read')
@@ -127,7 +127,7 @@ class ClientsEventsTestCase(testutil.BaseTestCase):
         d4 = json.loads(r.data.decode('utf-8'))
         # Check the server for new events
         response = self.client.get(
-            '/clients/%s/subscribedevents' % self.client_id
+            '/clients/%s/subscribedevents' % self.id
         )
         resp = json.loads(response.data.decode('utf-8'))
         # Check that we get the correct response
@@ -135,9 +135,9 @@ class ClientsEventsTestCase(testutil.BaseTestCase):
             response.status_code: 200,
             resp['status']: 200,
             resp['message']: 'OK',
-            d2['event']['id']: resp['events'][0]['id'],
+            d4['event']['id']: resp['events'][0]['id'],
             d3['event']['id']: resp['events'][1]['id'],
-            d4['event']['id']: resp['events'][2]['id'],
+            d2['event']['id']: resp['events'][2]['id'],
         })
 
     @testutil.authenticate('read')

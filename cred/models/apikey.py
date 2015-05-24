@@ -4,7 +4,7 @@ from cred.database import db
 
 class APIKey(db.Model):
     __tablename__ = 'apikey'
-    apikey_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     apikey = db.Column(db.String(240))
     permission = db.Column(db.String(240))
     created = db.Column(db.DateTime, default=datetime.utcnow)
@@ -19,7 +19,7 @@ class APIKey(db.Model):
 
     def __repr__(self):
         return '<ID %r, API Key %r, Permission %r, Created %r>' % (
-            self.apikey_id,
+            self.id,
             self.apikey,
             self.permission,
             self.created

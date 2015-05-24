@@ -7,7 +7,7 @@ from cred.models.event import Event as EventModel
 
 
 full_event_fields = {
-    'id': fields.Integer(attribute='event_id'),
+    'id': fields.Integer,
     'device': fields.String(attribute='client.device'),
     'name': fields.String,
     'location': fields.String,
@@ -18,7 +18,7 @@ full_event_fields = {
 }
 
 simple_event_fields = {
-    'id': fields.Integer(attribute='event_id'),
+    'id': fields.Integer,
     'uri': fields.Url('events_item', absolute=True)
 }
 
@@ -48,7 +48,7 @@ def get_subscribed_events(request, client):
         )
         events += subscribed_events
     # Sort the events on ID before returning them
-    return sorted(events, key=lambda item: item['id'])
+    return sorted(events, key=lambda item: item['id'], reverse=True)
 
 
 class Events(util.AuthenticatedResource):
@@ -83,12 +83,12 @@ class Events(util.AuthenticatedResource):
         # FIXME: Find out why the URI in marshalling causes problems
         # For now, manually create the URI
         eventMarshal = marshal(event, {
-            'id': fields.Integer(attribute='event_id'),
+            'id': fields.Integer,
             'uri': fields.Url('events', absolute=True)
         })
         eventMarshal['uri'] = '{0}/{1}'.format(
             eventMarshal['uri'],
-            event.event_id
+            event.id
         )
         return {
             'status': 201,
@@ -128,11 +128,11 @@ class Events(util.AuthenticatedResource):
 class EventsItem(util.AuthenticatedResource):
     """Methods going to the /events/<int:id> route."""
 
-    def get(self, event_id):
+    def get(self, id):
         """Fetch a specific event."""
         self.require_read_permission()
         # Get the last event (it is sorted descending by id)
-        event = EventModel.query.filter_by(event_id=event_id).first()
+        event = EventModel.query.filter_by(id=id).first()
         if not event:
             raise EventNotFound()
         return {

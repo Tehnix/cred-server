@@ -32,13 +32,12 @@ class ClientsTestCase(testutil.BaseTestCase):
         self.authenticate_with_server('read', alternate_device='Thermostat')
         response = self.client.get('/clients?full=true')
         resp = json.loads(response.data.decode('utf-8'))
-        print(resp)
         testutil.assertEqual(self, {
             response.status_code: 200,
             resp['status']: 200,
             resp['message']: 'OK',
-            resp['clients'][0]['device']: 'Alarm',
-            resp['clients'][0]['location']: 'Living Room',
+            resp['clients'][2]['device']: 'Alarm',
+            resp['clients'][2]['location']: 'Living Room',
             'id' in resp['clients'][0]: True,
             'uri' in resp['clients'][0]: True,
         })
