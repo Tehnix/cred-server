@@ -169,9 +169,9 @@ Development
 =====
 The following should get you running:
 
-1. `$ git clone git@github.com:Tehnix/cred.git && cd cred-server`
+1. `$ git clone git@github.com:Tehnix/cred-server.git && cd cred-server`
 2. `$ virtualenv env && source env/bin/activate`
-3. `pip install -r requirements.txt`
+3. `$ pip install -r requirements.txt`
 4. Run tests with `nosetests` and alternatively with `--with-watch` (detects file changes)
 
 or a one-liner,
