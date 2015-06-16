@@ -50,8 +50,7 @@ If you don't supply the configuration location via `--config=/path/to/config`, t
     3. Users app directory
     4. System app directory
 
-The file searched for is called .credrc for 1. and 2., and without the dot
-for 3. and 4.. If none are found, it will use the default configuration.
+The file searched for is called credrc for 1., 3. and 4. and.credrc and 2. If none are found, it will use the default configuration.
 
 Example configuration for a local setup with a SQLite3 database:
 
@@ -164,6 +163,10 @@ The `type` setting in the configuration file takes any value that you can find
 at [SQLAlchemy engines](http://docs.sqlalchemy.org/en/latest/core/engines.html "SQLAlchemy engines") (like sqlite3,
 postgresql, postgresql+psycopg2, etc.).
 
+
+Frontend
+=====
+You can check out [cred-web](https://github.com/Tehnix/cred-web "cred-web repository") for a pure javascript frontend to the API server. It shows the active clients and all the events that are coming in.
 
 Development
 =====
