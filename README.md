@@ -168,6 +168,12 @@ Frontend
 =====
 You can check out [cred-web](https://github.com/Tehnix/cred-web "cred-web repository") for a pure javascript frontend to the API server. It shows the active clients and all the events that are coming in.
 
+
+Clients
+=====
+To easily create clients that connect to the API server, you can check out the client library at [cred-client](https://github.com/Tehnix/cred-client "cred-client repository").
+
+
 Development
 =====
 The following should get you running:
