@@ -44,7 +44,7 @@ default_config = {
 def locate_config_file():
     app_dirs = appdirs.AppDirs(appname, appauthor)
     if os.path.isfile(os.path.join(os.getcwd(), config_file)):
-        return os.path.join(os.getcwd(), dot_config_file)
+        return os.path.join(os.getcwd(), config_file)
     elif os.path.isfile(os.path.join(os.path.expanduser('~'), dot_config_file)):
         return os.path.join(os.path.expanduser('~'), dot_config_file)
     elif os.path.isfile(os.path.join(app_dirs.user_data_dir, config_file)):
