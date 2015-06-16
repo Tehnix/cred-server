@@ -6,6 +6,7 @@ cred-server.db
 cred-test.db
 .credrc
 credrc
+.python_version
 
 # C extensions
 *.so
