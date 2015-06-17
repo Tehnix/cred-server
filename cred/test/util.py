@@ -13,7 +13,6 @@ from cred.routes import create_api_resources
 # Constants used throughout the test suites
 DEVICE = 'Thermostat'
 LOCATION = 'Living Room'
-EVENTS = ['Temperature']
 SUBSCRIBE = {
     'Light': {'location': 'Living Room'},
     'Alarm': {}

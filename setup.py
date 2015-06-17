@@ -7,7 +7,7 @@ if sys.version_info < (3,):
     print("I'm only for 3, please upgrade")
     sys.exit(1)
 
-version = '0.2.15'
+version = '0.2.16'
 
 setup(
     name='cred-server',
