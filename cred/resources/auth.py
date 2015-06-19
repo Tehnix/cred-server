@@ -67,13 +67,13 @@ class Auth(Resource):
             scheduled = {
                 'assigned': True,
                 'slot': random.randrange(1,31),
-                'schedulerPeriod': cred.config.loaded_configuration['schedulerPeriod']
+                'period': cred.config.loaded_configuration['schedulerPeriod']
             }
         else:
             scheduled = {
                 'assigned': False,
                 'slot': None,
-                'schedulerPeriod': None
+                'period': None
             }
         # FIXME: Set cookie in a proper way!
         return {
