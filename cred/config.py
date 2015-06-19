@@ -37,6 +37,7 @@ default_config = {
         'database': 'cred-server.db'
     },
     'scheduler': False,
+    'schedulerPeriod': 30,
     'pingtimeout': 240
 }
 

@@ -21,7 +21,8 @@ class AuthTestCase(testutil.BaseTestCase):
             'sessionKey' in resp: True,
             resp['scheduled']['slot']: None,
             resp['PINGTimeout']: 240,
-            resp['scheduled']['assigned']: False
+            resp['scheduled']['assigned']: False,
+            resp['scheduled']['schedulerPeriod']: None
         })
 
     def test_that_apikey_is_required(self):

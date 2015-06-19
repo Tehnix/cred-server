@@ -66,12 +66,14 @@ class Auth(Resource):
             # Very simple scheduler, that assigns a random timeslot
             scheduled = {
                 'assigned': True,
-                'slot': random.randrange(1,31)
+                'slot': random.randrange(1,31),
+                'schedulerPeriod': cred.config.loaded_configuration['schedulerPeriod']
             }
         else:
             scheduled = {
                 'assigned': False,
-                'slot': None
+                'slot': None,
+                'schedulerPeriod': None
             }
         # FIXME: Set cookie in a proper way!
         return {

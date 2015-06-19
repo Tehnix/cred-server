@@ -60,6 +60,7 @@ approot: '127.0.0.1'
 host: '*'
 port: 5000
 scheduler: False
+schedulerPeriod: 30
 pingtimeout: 240
 database:
   type: 'sqlite3'
@@ -78,6 +79,7 @@ approot: '127.0.0.1'
 host: '*'
 port: 5000
 scheduler: False
+schedulerPeriod: 30
 pingtimeout: 240
 database:
   type: 'postgresql'
