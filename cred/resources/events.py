@@ -131,7 +131,7 @@ class EventsItem(util.AuthenticatedResource):
     def get(self, id):
         """Fetch a specific event."""
         self.require_read_permission()
-        # Get the last event (it is sorted descending by id)
+        # Get the event from its ID
         event = EventModel.query.filter_by(id=id).first()
         if not event:
             raise EventNotFound()

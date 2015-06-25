@@ -22,7 +22,7 @@ Usage
 =====
 Simply install with pip, add a configuration and run it.
 
-1. `$ pip install cred-server`$
+1. `$ pip install cred-server`
 3. `$ cred-server`
 
 and test out the API with curl :)
